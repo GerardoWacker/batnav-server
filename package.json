@@ -1,0 +1,26 @@
+{
+  "name": "damas-server",
+  "version": "2022.329.0",
+  "description": "Servidor para el juego de Damas (https.//github.com/gerardowacker/damas)",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GerardoWacker/damas-server.git"
+  },
+  "author": "Gerardo Wacker (https://github.com/gerardowacker)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/GerardoWacker/damas-server/issues"
+  },
+  "homepage": "https://github.com/GerardoWacker/damas-server#readme",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
+  }
+}
