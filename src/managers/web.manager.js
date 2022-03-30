@@ -2,18 +2,33 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
-const router = require('../routes/damas.router')
+const Router = require('../routes/damas.router')
 
-class Web {
-    start(port) {
-        return new Promise((res, rej) => {
+class Web
+{
+    /**
+     * Módulo para la parte web; véase autenticación y obtención de datos estáticos.
+     * @param database Base de datos.
+     * @param sessionManager Session Manager.
+     */
+    constructor(database, sessionManager)
+    {
+        this.sessionManager = sessionManager
+        this.database = database
+        this.router = new Router(database)
+    }
+
+    start(port)
+    {
+        return new Promise(res =>
+        {
             const app = express()
 
             app.use(bodyParser.json())
             app.use(cors())
             app.set('trust proxy', true)
 
-            app.use('/', router)
+            this.router.create().then(routes => app.use('/', routes))
 
             app.listen(port, () => res(app))
         })
