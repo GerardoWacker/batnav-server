@@ -1,18 +1,15 @@
-let PORT = process.env.PORT || 1301
+/**
+ * Servidor para juego
+ * @author Gerardo Wacker
+ */
 
-const express = require('express')
+const Web = require('./managers/web.manager')
+const Socket = require('./managers/socket.manager')
+const Session = require('./managers/session.manager')
 
-const router = require('./routes/damas.router')
+const socket = new Socket()
+const session = new Session()
+const web = new Web()
 
-const bodyParser = require('body-parser')
-const cors = require('cors')
-
-const app = express()
-
-app.use(bodyParser.json())
-app.use(cors())
-app.set('trust proxy', true)
-
-app.use('/', router)
-
-app.listen(PORT, () => console.log('🚀 Servidor iniciado en el puerto ' + PORT))
+web.start(1301).then(() => console.log('🚀 Servidor web iniciado en el puerto 1301.'))
+socket.start(1302, session).then(() => console.log('📦 Servidor de sockets iniciado en el puerto 1302.'))
