@@ -4,7 +4,7 @@ class Session {
     /** Estructura -> ID de usuario : UUID Identificador de sesión */
     openSessions = new Map()
 
-    createSession(userID) {
+    create(userID) {
         return new Promise((res, rej) => {
             let uuid = uuid()
             this.openSessions.set(userID, uuid)
@@ -12,17 +12,18 @@ class Session {
         })
     }
 
-    validateSession(uuid) {
+    validate(uuid) {
         return new Promise((res, rej) => {
             if(Array.from(this.openSessions.values).includes(uuid)) {
-                for (let [key, value] of map.entries()) {
-                    if (value === searchValue)
-                      return key;
+                for (let [userID, uuid_] of this.openSessions.entries()) {
+                    if (uuid_ === uuid)
+                    res({success: true, content: userID})
                 }
-                res({success: true, content: })
             } else
                 res({success: false, content: "La sesión solicitada es inválida, o ha expirado."})
         })
     }
     
 }
+
+module.exports = Session
