@@ -4,6 +4,7 @@
   "description": "Servidor para el juego de Damas (https.//github.com/gerardowacker/damas)",
   "main": "src/index.js",
   "scripts": {
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
