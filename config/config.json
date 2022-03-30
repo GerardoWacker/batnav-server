@@ -1,0 +1,9 @@
+{
+  "connection": {
+    "user": "user",
+    "address": "cluster.url",
+    "password": "password",
+    "database": "database",
+    "users": "users_collection"
+  }
+}
