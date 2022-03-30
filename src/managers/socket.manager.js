@@ -11,7 +11,7 @@ class Socket {
     start(port, sessionManager) {
         return new Promise((res, rej) => {
             database.connect()
-                .then(() => console.log('📝 Conexión con base de datos establecida (Socket).'))
+                .then(() => console.log('📝 (Socket) Conexión con base de datos establecida.'))
                 .catch(err => {
                     console.log('❌ Ocurrió un error al conectarse a la base de datos.')
                     console.error(err)
