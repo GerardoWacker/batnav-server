@@ -7,7 +7,7 @@ class Session
 
     create(userID)
     {
-        return new Promise((res, rej) =>
+        return new Promise(res =>
         {
             let uuid = uuid()
             this.openSessions.set(userID, uuid)
@@ -17,7 +17,7 @@ class Session
 
     validate(uuid)
     {
-        return new Promise((res, rej) =>
+        return new Promise(res =>
         {
             if (Array.from(this.openSessions.values()).includes(uuid))
             {
