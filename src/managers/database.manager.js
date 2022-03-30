@@ -1,16 +1,25 @@
-const {MongoClient, ObjectId} = require('mongodb')
+const {MongoClient} = require('mongodb')
 const config = require('../../config/config.json')
 const bcrypt = require('bcrypt')
 
 class Database
 {
     /**
+     * Encargado de manejar las conexiones hacia la base de datos.
+     * @param sessionManager<Session> Session Manager.
+     */
+    constructor(sessionManager)
+    {
+        this.sessionManager = sessionManager
+    }
+
+    /**
      * Conecta a la base de datos. Método inicial.
      * @returns {Promise<JSON>}
      */
     async connect()
     {
-        return new Promise(async (res, rej) =>
+        return new Promise(async res =>
         {
             let endpoint = `mongodb+srv://${config.connection.user}:${config.connection.password}@${config.connection.address}/${config.connection.database}?retryWrites=true&w=majority`
             const client = new MongoClient(endpoint)
@@ -23,13 +32,80 @@ class Database
     }
 
     /**
+     * Verifica las credenciales dadas por el usuario al intentar iniciar sesión.
+     * @param data<JSON> JSON conteniendo las credenciales dadas.
+     * @returns {Promise<JSON>}
+     */
+    login(data)
+    {
+        return new Promise(res =>
+        {
+            if (!data)
+                return res({success: false, content: "¡No se proporcionaron los datos suficientes!"})
+
+            this.userDatabase.findOne({user: data.username.toLowerCase()}, (err, user) =>
+            {
+                if (err)
+                {
+                    console.log('❌ Ocurrió un error al iniciar la sesión de un usuario.')
+                    console.error(err)
+                    return res({
+                        success: false,
+                        content: "Ocurrió un error al intentar iniciar la sesión del usuario. [c:1]"
+                    })
+                }
+                if (!user)
+                    return res({
+                        success: false,
+                        content: "El usuario o la contraseña son incorrectos. Intentá de nuevo."
+                    })
+
+                bcrypt.compare(data.password, user.password, (err, result) =>
+                {
+                    if (err)
+                    {
+                        return res({
+                            success: false,
+                            content: "Ocurrió un error al intentar iniciar la sesión del usuario. [c:2]"
+                        })
+                    }
+                    if (!result)
+                    {
+                        return res({
+                            success: false,
+                            content: "El usuario o la contraseña son incorrectos. Intentá de nuevo."
+                        })
+                    }
+                    this.sessionManager.create(user._id).then(sesRes =>
+                    {
+                        if (sesRes.success)
+                        {
+                            res({
+                                success: true,
+                                content: sesRes.content
+                            })
+                        }
+                        else
+                        {
+                            res({
+                                success: false,
+                                content: "Ocurrió un error al intentar iniciar la sesión del usuario. [c:3]"
+                            })
+                        }
+                    })
+                })
+            })
+        })
+    }
+
+    /**
      * Registra un usuario en la base de datos.
      * @param data<JSON> JSON conteniendo los datos correspondientes al usuario.
      * @returns {Promise<JSON>}
      */
     register(data)
     {
-        return new Promise((res, rej) =>
+        return new Promise(res =>
         {
             this.userDatabase.findOne({email: data.email.toLowerCase()}, (err, user) =>
             {
@@ -82,7 +158,7 @@ class Database
                                 developer: false
                             }
 
-                            this.userDatabase.insertOne(user, (error, res) =>
+                            this.userDatabase.insertOne(user, (error, result) =>
                             {
                                 if (error)
                                 {
@@ -96,7 +172,7 @@ class Database
 
                                 return res({
                                     success: true,
-                                    content: user._id
+                                    content: "¡El usuario fue creado con éxito!"
                                 })
                             })
                         }
@@ -108,7 +184,7 @@ class Database
 
     getUserById(userId)
     {
-        return new Promise((res, rej) =>
+        return new Promise(res =>
         {
             this.userDatabase.findOne({_id: userId}, (err, user) =>
             {
