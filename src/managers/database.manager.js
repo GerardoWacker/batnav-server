@@ -182,17 +182,46 @@ class Database
         })
     }
 
+    /**
+     * Busca un usuario basándose en su nombre de usuario.
+     * @param username Nombre de usuario
+     * @returns {Promise<JSON>}
+     */
+    getUser(username)
+    {
+        return new Promise(res =>
+        {
+            this.userDatabase.findOne({username: username}, (err, user) =>
+            {
+                if (err)
+                    return res({
+                        success: false,
+                        content: "Hubo un error intentando obtener los datos del usuario."
+                    });
+                if (!user)
+                    return res({success: false, content: "El usuario no fue encontrado."})
+
+                delete user.password
+                delete user._id
+
+                return res({success: true, content: user});
+            })
+        })
+    }
+
     getUserById(userId)
     {
         return new Promise(res =>
         {
             this.userDatabase.findOne({_id: userId}, (err, user) =>
             {
-                if (err) return res({
-                    success: false,
-                    content: "Hubo un error intentando obtener los datos del usuario."
-                });
-                if (!user) return res({success: false, content: "El usuario no fue encontrado."});
+                if (err)
+                    return res({
+                        success: false,
+                        content: "Hubo un error intentando obtener los datos del usuario."
+                    });
+                if (!user)
+                    return res({success: false, content: "El usuario no fue encontrado."})
 
                 delete user.password
                 delete user._id
