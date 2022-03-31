@@ -1,6 +1,11 @@
 const { Server } = require('socket.io')
 
 class Socket {
+    /**
+     * Módulo encargado de manejar sockets.
+     * @param database Base de datos.
+     * @param sessionManager Session Manager.
+     */
     constructor(database, sessionManager)
     {
         this.sessionManager = sessionManager
@@ -35,6 +40,11 @@ class Socket {
         })
     }
 
+    /**
+     * Método ejecutado cuando se conecta un usuario.
+     * @param socket Socket de conexión bilateral con el cliente.
+     * @param uuid Identificador único de sesión.
+     */
     authenticate(socket, uuid) {
         this.sessionManager.validate(uuid).then(response => {
             if(response.success) {
