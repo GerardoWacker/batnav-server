@@ -197,18 +197,23 @@ class Database
                     return res({
                         success: false,
                         content: "Hubo un error intentando obtener los datos del usuario."
-                    });
+                    })
                 if (!user)
                     return res({success: false, content: "El usuario no fue encontrado."})
 
                 delete user.password
                 delete user._id
 
-                return res({success: true, content: user});
+                return res({success: true, content: user})
             })
         })
     }
 
+    /**
+     * Busca un usuario basándose en su ObjectId
+     * @param userId ObjectId del usuario en la colección de usuarios.
+     * @returns {Promise<JSON>}
+     */
     getUserById(userId)
     {
         return new Promise(res =>
@@ -219,14 +224,14 @@ class Database
                     return res({
                         success: false,
                         content: "Hubo un error intentando obtener los datos del usuario."
-                    });
+                    })
                 if (!user)
                     return res({success: false, content: "El usuario no fue encontrado."})
 
                 delete user.password
                 delete user._id
 
-                return res({success: true, content: user});
+                return res({success: true, content: user})
             })
         })
     }
