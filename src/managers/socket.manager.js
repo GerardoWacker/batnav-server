@@ -12,6 +12,11 @@ class Socket {
     /** Estructura -> UUID Identificador de sesión : ID de socket */
     playerPool = new Map()
 
+    /**
+     * Inicia el servidor de Socket.
+     * @param port Puerto a inicializar.
+     * @returns {Promise<unknown>}
+     */
     start(port) {
         return new Promise(res => {
             this.database.connect()
