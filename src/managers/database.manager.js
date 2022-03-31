@@ -43,7 +43,7 @@ class Database
             if (!data)
                 return res({success: false, content: "¡No se proporcionaron los datos suficientes!"})
 
-            this.userDatabase.findOne({user: data.username.toLowerCase()}, (err, user) =>
+            this.userDatabase.findOne({username: data.username.toLowerCase()}, (err, user) =>
             {
                 if (err)
                 {
