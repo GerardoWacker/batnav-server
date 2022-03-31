@@ -15,7 +15,7 @@ class Web
     {
         this.sessionManager = sessionManager
         this.database = database
-        this.router = new Router(database)
+        this.router = new Router(database, sessionManager)
     }
 
     start(port)
