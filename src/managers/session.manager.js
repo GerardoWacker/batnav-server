@@ -1,4 +1,4 @@
-const {v4: uuid} = require('uuid');
+const {v4: uuidv4} = require('uuid');
 
 class Session
 {
@@ -9,7 +9,7 @@ class Session
     {
         return new Promise(res =>
         {
-            let uuid = uuid()
+            let uuid = uuidv4()
             this.openSessions.set(userID, uuid)
             res({success: true, content: uuid})
         })
