@@ -1,4 +1,5 @@
 const express = require('express')
+const packageJson = require('../../package.json')
 
 class Router
 {
@@ -24,7 +25,7 @@ class Router
             const router = express.Router()
             this.database.connect().then(() =>
             {
-                router.get('/', (req, res) => res.send('La curiosidad mató al gato.'))
+                router.get('/', (req, res) => res.send('La curiosidad mató al gato.\nRunning ' + packageJson.name + ' ' + packageJson.version + ' (' + packageJson.homepage + ').'))
                 router.post('/login', (req, res) => this.database.login(req.body).then(result => res.send(result)))
                 router.post('/register', (req, res) => this.database.register(req.body).then(result => res.send(result)))
                 router.get('/user/:name', (req, res) => this.database.getUser(req.params.name).then(result => res.send(result)))
