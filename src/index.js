@@ -17,10 +17,15 @@ const web = new Web(database, session);
 
 web
   .start(config.port.web)
-  .then(() => console.log("🚀 Servidor web iniciado en el puerto 1301."));
+  .then(() =>
+    console.log(
+      "🚀 Servidor web iniciado en el puerto " + config.port.web + "."
+    )
+  );
 socket
   .start(config.port.socket)
   .then(() =>
-    console.log("📦 Servidor de sockets iniciado en el puerto 1302.")
+    console.log(
+      "📦 Servidor de sockets iniciado en el puerto " + config.port.socket + "."
+    )
   );
-
