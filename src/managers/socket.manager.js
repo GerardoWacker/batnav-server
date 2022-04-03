@@ -85,34 +85,72 @@ class Socket
      */
     ready(socket, uuid)
     {
-        this.sessionManager.validate(uuid).then(response =>
+        // Validar la sesión del jugador.
+        this.sessionManager.validate(uuid).then(sessionRes =>
         {
-            if (response.success)
+            // Si la sesión existe...
+            if (sessionRes.success)
             {
-                this.database.getUserById(response.content).then(user =>
+                // Obtener el objeto del usuario llamando a la base de datos.
+                this.database.getUserById(sessionRes.content).then(user =>
                 {
-                    if(user.success)
+                    // Si la solicitud es satisfactoria...
+                    if (user.success)
                     {
-                        this.pairingManager.search(response.content, user.content.stats.elo).then(result =>
+                        // Buscar un oponente.
+                        this.pairingManager.search(uuid, user.content.stats.elo).then(pairingRes =>
                         {
-                            this.sessionManager.validate(result.content.uuid).then(response =>
+                            // Una vez que se encuentra a un oponente...
+                            // Validar la sesión del oponente.
+                            this.sessionManager.validate(pairingRes.content.opponent.id).then(oppSessionRes =>
                             {
-                                if (response.success)
+                                // Si la sesión del oponente existe...
+                                if (oppSessionRes.success)
                                 {
-                                    this.database.getUserById(response.content).then(user =>
+                                    // Obtener los datos del oponente.
+                                    this.database.getUserById(oppSessionRes.content).then(async opponent =>
                                     {
-                                        this.matchManager.create(uuid, result.content.uuid).then(matchId =>
-                                        {
-                                            delete user.email
-                                            delete user.created
+                                        // Se salta el proceso de verificación de existencia del usuario.
+                                        // Si es que el oponente no es válido a esta altura, algo salió muy mal.
 
-                                            socket.emit('match-found', {
-                                                match: matchId,
-                                                opponent: user
+                                        // Determinar si el jugador o el oponente tiran primero.
+                                        if (pairingRes.content.order > pairingRes.content.opponent.order)
+                                        {
+                                            // El jugador 1 crea la partida.
+                                            this.matchManager.create(uuid, pairingRes.content.opponent.id).then(matchId =>
+                                            {
+                                                delete opponent.content.email
+                                                delete opponent.content.created
+
+                                                return socket.emit('match-found', {
+                                                    match: matchId.content,
+                                                    opponent: opponent.content
+                                                })
                                             })
-                                        })
+                                        }
+                                        else
+                                        {
+                                            // Esperar a que el jugador 1 cree la partida.
+
+                                            // Hack para hacer la función en loop
+                                            while (!this.matchManager.getMatch(uuid)) {
+                                                await new Promise(t => setTimeout(t, 1000));
+                                            }
+
+                                            delete opponent.content.email
+                                            delete opponent.content.created
+
+                                            return socket.emit('match-found', {
+                                                match: this.matchManager.getMatch(uuid),
+                                                opponent: opponent.content
+                                            })
+                                        }
                                     })
                                 }
+                                else
+                                    return socket.emit('pairing-fail', {
+                                        content: "El oponente era inválido"
+                                    })
                             })
                         })
                     }
@@ -121,7 +159,7 @@ class Socket
             else
                 socket.emit('authentication', {
                     success: false,
-                    content: "Hubo un error validando la sesión: " + response.content
+                    content: "Hubo un error validando la sesión: " + sessionRes.content
                 })
         })
     }
@@ -132,11 +170,12 @@ class Socket
      */
     disconnect(socket)
     {
-        for (let [uuid, socketId] of this.playerPool.entries())
-        {
-            if (socketId === socket.id)
-                this.playerPool.delete(uuid)
-        }
+        if (this.pairingManager.playerPool.values())
+            for (let [uuid, socketId] of this.playerPool.entries())
+            {
+                if (socketId === socket.id)
+                    this.playerPool.delete(uuid)
+            }
     }
 }
 
