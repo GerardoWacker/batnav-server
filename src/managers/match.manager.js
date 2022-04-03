@@ -31,7 +31,7 @@ class Match
     {
         return new Promise(res =>
         {
-            let uuid = uuidV4()
+            let uuid = uuidv4()
             this.currentMatches.set(uuid, {
                 player1: {
                     id: player1Id,
@@ -46,6 +46,21 @@ class Match
             })
             res({success: true, content: uuid})
         })
+    }
+
+    /**
+     * Obtiene el Id. de partida a base de un jugador
+     * @param playerId Id. de sesión del jugador.
+     * @returns {null|any} Id. de partida (null si no está en ninguna)
+     */
+    getMatch(playerId)
+    {
+        for (let [id, value] of this.currentMatches.entries())
+        {
+            if (value.player1.id === playerId || value.player2.id === playerId)
+                return id
+        }
+        return null
     }
 
     /**
