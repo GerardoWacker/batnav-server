@@ -1,6 +1,6 @@
 {
   "name": "damas-server",
-  "version": "2022.401.0",
+  "version": "2022.403.0",
   "description": "Servidor para el juego de Damas (https.//github.com/gerardowacker/damas)",
   "main": "src/index.js",
   "scripts": {
