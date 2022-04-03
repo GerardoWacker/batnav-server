@@ -31,7 +31,7 @@ class Match
     {
         return new Promise(res =>
         {
-            let uuid = uuidV4()
+            let uuid = uuidv4()
             this.currentMatches.set(uuid, {
                 player1: {
                     id: player1Id,
