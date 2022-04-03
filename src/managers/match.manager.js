@@ -49,6 +49,21 @@ class Match
     }
 
     /**
+     * Obtiene el Id. de partida a base de un jugador
+     * @param playerId Id. de sesión del jugador.
+     * @returns {null|any} Id. de partida (null si no está en ninguna)
+     */
+    getMatch(playerId)
+    {
+        for (let [id, value] of this.currentMatches.entries())
+        {
+            if (value.player1.id === playerId || value.player2.id === playerId)
+                return id
+        }
+        return null
+    }
+
+    /**
      * Establece la posición de los barcos en la creación de una partida.
      * @param matchId Id. de partida.
      * @param playerId Id. del jugador.
