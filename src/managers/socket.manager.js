@@ -3,11 +3,11 @@ const {Server} = require('socket.io')
 class Socket
 {
     /**
-     * Módulo encargado de manejar sockets.
-     * @param database Base de datos.
+     * Real-time connections manager module.
+     * @param database Database.
      * @param sessionManager Session Manager.
-     * @param matchManager Administrador de partidas.
-     * @param pairingManager Administrador de matchmaking.
+     * @param matchManager Match Manager.
+     * @param pairingManager Pairing/Matchmaking Manager.
      */
     constructor(database, sessionManager, matchManager, pairingManager)
     {
@@ -19,12 +19,12 @@ class Socket
 
     io = new Server()
 
-    /** Estructura -> UUID Identificador de sesión : ID de socket */
+    /** Structure -> UUID session identifier : Socket Id. */
     playerPool = new Map()
 
     /**
-     * Inicia el servidor de Socket.
-     * @param port Puerto a inicializar.
+     * Starts the Socket server.
+     * @param port Port in which the server will be running.
      * @returns {Promise<unknown>}
      */
     start(port)
@@ -52,9 +52,9 @@ class Socket
     }
 
     /**
-     * Método ejecutado cuando se conecta un usuario.
-     * @param socket Socket de conexión bilateral con el cliente.
-     * @param uuid Identificador único de sesión.
+     * Method that executes when a user is trying to log in.
+     * @param socket Bilateral connection socket between server and client.
+     * @param uuid Session unique identifier.
      */
     authenticate(socket, uuid)
     {
@@ -79,44 +79,44 @@ class Socket
     }
 
     /**
-     * Método ejecutado cuando un usuario está listo para jugar.
-     * @param socket Socket de conexión bilateral con el cliente.
-     * @param uuid Identificador único de sesión.
+     * Method that executes when a user is ready to play.
+     * @param socket Bilateral connection socket between server and client.
+     * @param uuid Session unique identifier.
      */
     ready(socket, uuid)
     {
-        // Validar la sesión del jugador.
+        // Validate the player's session.
         this.sessionManager.validate(uuid).then(sessionRes =>
         {
-            // Si la sesión existe...
+            // If the session exists...
             if (sessionRes.success)
             {
-                // Obtener el objeto del usuario llamando a la base de datos.
+                // Get the user object by calling the database.
                 this.database.getUserById(sessionRes.content).then(user =>
                 {
-                    // Si la solicitud es satisfactoria...
+                    // If the request was successful...
                     if (user.success)
                     {
-                        // Buscar un oponente.
+                        // Search for an opponent.
                         this.pairingManager.search(uuid, user.content.stats.elo).then(pairingRes =>
                         {
-                            // Una vez que se encuentra a un oponente...
-                            // Validar la sesión del oponente.
+                            // When an opponent has been found...
+                            // Validate the opponent's session.
                             this.sessionManager.validate(pairingRes.content.opponent.id).then(oppSessionRes =>
                             {
-                                // Si la sesión del oponente existe...
+                                // If the opponent's session exists...
                                 if (oppSessionRes.success)
                                 {
-                                    // Obtener los datos del oponente.
+                                    // Get the opponent's user data.
                                     this.database.getUserById(oppSessionRes.content).then(async opponent =>
                                     {
-                                        // Se salta el proceso de verificación de existencia del usuario.
-                                        // Si es que el oponente no es válido a esta altura, algo salió muy mal.
+                                        // The user validation process is skipped.
+                                        // If the opponent isn't valid by this point, something went really wrong.
 
-                                        // Determinar si el jugador o el oponente tiran primero.
+                                        // Determine who will throw first.
                                         if (pairingRes.content.order > pairingRes.content.opponent.order)
                                         {
-                                            // El jugador 1 crea la partida.
+                                            // Player 1 creates the match.
                                             this.matchManager.create(uuid, pairingRes.content.opponent.id).then(matchId =>
                                             {
                                                 delete opponent.content.email
@@ -130,12 +130,11 @@ class Socket
                                         }
                                         else
                                         {
-                                            // Esperar a que el jugador 1 cree la partida.
+                                            // Wait until player 1 creates the match.
 
-                                            // Hack para hacer la función en loop
-                                            while (!this.matchManager.getMatch(uuid)) {
+                                            // Waiting + checking hack.
+                                            while (!this.matchManager.getMatch(uuid))
                                                 await new Promise(t => setTimeout(t, 1000));
-                                            }
 
                                             delete opponent.content.email
                                             delete opponent.content.created
@@ -165,8 +164,8 @@ class Socket
     }
 
     /**
-     * Método ejecutado en la desconexión de un usuario.
-     * @param socket Socket de conexión bilateral con el cliente en desconexión.
+     * Method that executes once a player has disconnected.
+     * @param socket Bilateral connection socket between server and disconnecting client.
      */
     disconnect(socket)
     {
