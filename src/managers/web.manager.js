@@ -7,8 +7,8 @@ const Router = require('../routes/main.router')
 class Web
 {
     /**
-     * Módulo para la parte web; véase autenticación y obtención de datos estáticos.
-     * @param database Base de datos.
+     * Web components module; see authentication and static data fetching.
+     * @param database Database module.
      * @param sessionManager Session Manager.
      */
     constructor(database, sessionManager)
@@ -18,6 +18,11 @@ class Web
         this.router = new Router(database, sessionManager)
     }
 
+    /**
+     * Starts the express server and assigns routes.
+     * @param port Port in which the server will be running.
+     * @returns {Promise<JSON>}
+     */
     start(port)
     {
         return new Promise(res =>
