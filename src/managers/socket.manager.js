@@ -43,7 +43,8 @@ class Socket
             {
                 console.log('⬇️ (Socket) ¡Conexión entrante!')
                 socket.on('authenticate', uuid => this.authenticate(socket, uuid))
-                socket.on('ready', uuid => this.ready(socket, uuid))
+                socket.on('join-ranked-queue', uuid => this.joinRankedQueue(socket, uuid))
+                socket.on('leave-ranked-queue', uuid => this.leaveRankedQueue(socket, uuid))
                 socket.on('disconnect', () => this.disconnect(socket))
             })
             this.io.listen(port)
@@ -79,11 +80,11 @@ class Socket
     }
 
     /**
-     * Method that executes when a user is ready to play.
+     * Method that executes when a user joins the ranked queue.
      * @param socket Bilateral connection socket between server and client.
      * @param uuid Session unique identifier.
      */
-    ready(socket, uuid)
+    joinRankedQueue(socket, uuid)
     {
         // Validate the player's session.
         this.sessionManager.validate(uuid).then(sessionRes =>
@@ -122,16 +123,19 @@ class Socket
                                                 delete opponent.content.email
                                                 delete opponent.content.created
 
-                                                return socket.emit('match-found', {
-                                                    match: matchId.content,
-                                                    opponent: opponent.content
+                                                return socket.emit('match', {
+                                                    success: true,
+                                                    content: {
+                                                        matchId: matchId.content,
+                                                        opponent: opponent.content
+                                                    }
                                                 })
                                             })
                                         }
                                         else
                                         {
                                             // Wait until player 1 creates the match.
-                                          
+
                                             // Waiting + checking hack.
                                             while (!this.matchManager.getMatch(uuid))
                                                 await new Promise(t => setTimeout(t, 1000));
@@ -139,16 +143,23 @@ class Socket
                                             delete opponent.content.email
                                             delete opponent.content.created
 
-                                            return socket.emit('match-found', {
-                                                match: this.matchManager.getMatch(uuid),
-                                                opponent: opponent.content
+                                            return socket.emit('match', {
+                                                success: true,
+                                                content: {
+                                                    matchId: this.matchManager.getMatch(uuid),
+                                                    opponent: opponent.content
+                                                }
                                             })
                                         }
                                     })
                                 }
                                 else
-                                    return socket.emit('pairing-fail', {
-                                        content: "El oponente era inválido"
+                                    return socket.emit('match', {
+                                        success: false,
+                                        content: {
+                                            retry: true,
+                                            message: "El oponente era inválido."
+                                        }
                                     })
                             })
                         })
@@ -160,6 +171,27 @@ class Socket
                     success: false,
                     content: "Hubo un error validando la sesión: " + sessionRes.content
                 })
+        })
+    }
+
+    /**
+     * Method that executes when the player requests to leave the ranked queue
+     * @param socket Bilateral connection socket between server and client
+     * @param uuid Unique session Id.
+     */
+    leaveRankedQueue(socket, uuid)
+    {
+        if (this.pairingManager.playerPool.has(uuid))
+        {
+            this.pairingManager.playerPool.delete(uuid)
+        }
+
+        return socket.emit('match', {
+            success: false,
+            content: {
+                retry: false,
+                message: "El usuario abandonó la lista de espera."
+            }
         })
     }
 
