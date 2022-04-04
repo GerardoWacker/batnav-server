@@ -61,7 +61,7 @@ To state changes in the codebase, you must follow certain steps:
 - Then, [open a pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
 to notify us that your code is ready for review.
 
-In this way, you may be able to turn into an active contributor of the `batnav-server` project.
+This way, you may be able to turn into an active contributor of the `batnav-server` project.
 
 ## 📝 License
 
