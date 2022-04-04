@@ -1,9 +1,9 @@
 # 🚢 batnav-server
 
-[![GitHub Forks](https://img.shields.io/github/forks/GerardoWacker/damas-server.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/GerardoWacker/damas-server/network)
-[![GitHub Stars](https://img.shields.io/github/stars/GerardoWacker/damas-server.svg?style=social&label=Star&maxAge=2592000)](https://github.com/GerardoWacker/damas-server/stargazers)
-[![GitHub Watches](https://img.shields.io/github/watchers/GerardoWacker/damas-server.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/GerardoWacker/damas-server/watchers)
-[![HitCount](http://hits.dwyl.com/GerardoWacker/damas-server.svg)](http://hits.dwyl.com/GerardoWacker/damas-server)
+[![GitHub Forks](https://img.shields.io/github/forks/GerardoWacker/batnav-server.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/GerardoWacker/batnav-server/network)
+[![GitHub Stars](https://img.shields.io/github/stars/GerardoWacker/batnav-server.svg?style=social&label=Star&maxAge=2592000)](https://github.com/GerardoWacker/batnav-server/stargazers)
+[![GitHub Watches](https://img.shields.io/github/watchers/GerardoWacker/batnav-server.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/GerardoWacker/batnav-server/watchers)
+[![HitCount](http://hits.dwyl.com/GerardoWacker/damas-server.svg)](http://hits.dwyl.com/GerardoWacker/batnav-server)
 
 ## ❓ FAQ
 
