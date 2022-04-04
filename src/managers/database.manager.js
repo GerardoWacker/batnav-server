@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt')
 class Database
 {
     /**
-     * Encargado de manejar las conexiones hacia la base de datos.
+     * Manages connections to the database.
      * @param sessionManager<Session> Session Manager.
      */
     constructor(sessionManager)
@@ -14,8 +14,8 @@ class Database
     }
 
     /**
-     * Conecta a la base de datos. Método inicial.
-     * @returns {Promise<JSON>}
+     * Connects to the database. Initial method.
+     * @returns {Promise<Database>} Database object.
      */
     async connect()
     {
@@ -32,8 +32,8 @@ class Database
     }
 
     /**
-     * Verifica las credenciales dadas por el usuario al intentar iniciar sesión.
-     * @param data<JSON> JSON conteniendo las credenciales dadas.
+     * Validates a pair of user credentials.
+     * @param data<JSON> JSON containing the actual credentials.
      * @returns {Promise<JSON>}
      */
     login(data)
@@ -99,8 +99,8 @@ class Database
     }
 
     /**
-     * Registra un usuario en la base de datos.
-     * @param data<JSON> JSON conteniendo los datos correspondientes al usuario.
+     * Registers a new user in the database.
+     * @param data<JSON> JSON containing the actual user to create.
      * @returns {Promise<JSON>}
      */
     register(data)
@@ -183,8 +183,8 @@ class Database
     }
 
     /**
-     * Busca un usuario basándose en su nombre de usuario.
-     * @param username Nombre de usuario
+     * Searches for a User based on a username.
+     * @param username Username
      * @returns {Promise<JSON>}
      */
     getUser(username)
@@ -210,8 +210,8 @@ class Database
     }
 
     /**
-     * Busca un usuario basándose en su ObjectId
-     * @param userId ObjectId del usuario en la colección de usuarios.
+     * Searches for a User based on an ObjectId
+     * @param userId User's ObjectId.
      * @returns {Promise<JSON>}
      */
     getUserById(userId)
