@@ -1,2 +1,2 @@
-# Damas-Server
-Servidor para el juego de Damas (https.//github.com/gerardowacker/damas)
+# batnav-Server
+Servidor para el juego de batnav (https.//github.com/gerardowacker/batnav)

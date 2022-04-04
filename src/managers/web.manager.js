@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
-const Router = require('../routes/damas.router')
+const Router = require('../routes/main.router')
 
 class Web
 {
