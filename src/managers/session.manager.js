@@ -2,29 +2,39 @@ const {v4: uuidv4} = require('uuid');
 
 class Session
 {
-    /** Estructura -> ID de usuario : UUID Identificador de sesión */
+    /** Structure -> User Id. : Session unique identifier */
     openSessions = new Map()
 
-    create(userID)
+    /**
+     * Creates a new session.
+     * @param userId User's ObjectId
+     * @returns {Promise<JSON>} Session unique Id.
+     */
+    create(userId)
     {
         return new Promise(res =>
         {
             let uuid = uuidv4()
-            this.openSessions.set(userID, uuid)
+            this.openSessions.set(userId, uuid)
             res({success: true, content: uuid})
         })
     }
 
+    /**
+     * Gets a user's ObjectId.
+     * @param uuid Session unique Id.
+     * @returns {Promise<JSON>} User's ObjectId
+     */
     validate(uuid)
     {
         return new Promise(res =>
         {
             if (Array.from(this.openSessions.values()).includes(uuid))
             {
-                for (let [userID, uuid_] of this.openSessions.entries())
+                for (let [userId, uuid_] of this.openSessions.entries())
                 {
                     if (uuid_ === uuid)
-                        res({success: true, content: userID})
+                        res({success: true, content: userId})
                 }
             }
             else
