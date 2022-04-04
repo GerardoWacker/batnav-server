@@ -133,7 +133,8 @@ class Socket
                                             // Esperar a que el jugador 1 cree la partida.
 
                                             // Hack para hacer la función en loop
-                                            while (!this.matchManager.getMatch(uuid)) {
+                                            while (!this.matchManager.getMatch(uuid))
+                                            {
                                                 await new Promise(t => setTimeout(t, 1000));
                                             }
 
@@ -170,12 +171,31 @@ class Socket
      */
     disconnect(socket)
     {
-        if (this.pairingManager.playerPool.values())
-            for (let [uuid, socketId] of this.playerPool.entries())
+        for (let [uuid, socketId] of this.playerPool.entries())
+        {
+            if (socketId === socket.id)
             {
-                if (socketId === socket.id)
-                    this.playerPool.delete(uuid)
+                if (this.pairingManager.playerPool.has(uuid))
+                {
+                    this.pairingManager.playerPool.delete(uuid)
+                }
+
+                let match = this.matchManager.getMatch(uuid)
+                if (match)
+                {
+                    if (match.player1.id === uuid)
+                    {
+                        // TODO: End match with player2 win.
+                    }
+                    else if (match.player2.id === uuid)
+                    {
+                        // TODO: End match with player1 win.
+                    }
+                }
+
+                this.playerPool.delete(uuid)
             }
+        }
     }
 }
 
