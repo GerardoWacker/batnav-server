@@ -2,16 +2,16 @@ const {v4: uuidv4} = require('uuid');
 
 class Match
 {
-    /** Estructura -> Id. de partida : {
+    /** Structure -> Match Id. : {
      * player1: {
-     *     id: Id. de sesión,
-     *     ships: Coords. de los puntos ocupados,
-     *     bombs: Bombas arrojadas.
+     *     id: Session Id.,
+     *     ships: Ship's occupied points in coordinates format,
+     *     bombs: Thrown bombs.
      * },
      * player2: {
-     *     id: Id. de sesión,
-     *     ships: Coords. de los puntos ocupados,
-     *     bombs: Bombas arrojadas.
+     *     id: Session Id.,
+     *     ships: Ship's occupied points in coordinates format,
+     *     bombs: Thrown bombs.
      * }
      * }*/
     currentMatches = new Map()
@@ -22,10 +22,10 @@ class Match
     }
 
     /**
-     * Crea una partida.
-     * @param player1Id Id. de sesión del jugador 1.
-     * @param player2Id Id. de sesión del jugador 2.
-     * @returns {Promise<JSON>} Id. único de partida.
+     * Creates a match.
+     * @param player1Id Player 1 session Id.
+     * @param player2Id Player 1 session Id.
+     * @returns {Promise<JSON>} Match unique Id.
      */
     create(player1Id, player2Id)
     {
@@ -49,9 +49,9 @@ class Match
     }
 
     /**
-     * Obtiene el Id. de partida a base de un jugador
-     * @param playerId Id. de sesión del jugador.
-     * @returns {null|any} Id. de partida (null si no está en ninguna)
+     * Fetches a match Id. based on a player Id.
+     * @param playerId Player session Id.
+     * @returns {null|any} Match Id. (returns null if none)
      */
     getMatch(playerId)
     {
@@ -64,10 +64,10 @@ class Match
     }
 
     /**
-     * Establece la posición de los barcos en la creación de una partida.
-     * @param matchId Id. de partida.
-     * @param playerId Id. del jugador.
-     * @param coordinates Coordenadas de los puntos ocupados por los barcos.
+     * Sets the ship's position in the beginning of a match.
+     * @param matchId Match Id.
+     * @param playerId Player Id..
+     * @param coordinates Ship's occupied points in coordinates format.
      * @returns {Promise<JSON>}
      */
     setShips(matchId, playerId, coordinates)
@@ -100,10 +100,10 @@ class Match
     }
 
     /**
-     * Arroja una bomba hacia unas coordenadas establecidas.
-     * @param matchId Id. de partida.
-     * @param playerId Id. del jugador.
-     * @param coordinates Coordenadas donde la bomba es arrojada.
+     * Throws a bomb into a pair of specified coordinates.
+     * @param matchId Match Id.
+     * @param playerId Player Id.
+     * @param coordinates Coords. where the bomb is thrown.
      * @returns {Promise<JSON>}
      */
     throwBomb(matchId, playerId, coordinates)
