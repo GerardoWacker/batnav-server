@@ -4,8 +4,8 @@ const packageJson = require('../../package.json')
 class Router
 {
     /**
-     * Router principal.
-     * @param database Base de datos.
+     * Main router.
+     * @param database Database.
      * @param sessionManager Session Manager.
      */
     constructor(database, sessionManager)
@@ -15,7 +15,7 @@ class Router
     }
 
     /**
-     * Crea una instancia de Router.
+     * Creates a Router instance.
      * @returns {Promise<Router>}
      */
     create()

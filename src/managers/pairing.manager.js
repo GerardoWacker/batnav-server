@@ -57,11 +57,11 @@ function pair(pairing)
 
 class Pairing
 {
-    /** Estructura -> Id. de sesión : {
-     * elo: Elo del jugador,
-     * range: Rango de búsqueda,
-     * match: Oponente,
-     * order: Orden de partida. Se determina aleatoriamente
+    /** Structure -> Session Id. : {
+     * elo: Player elo,
+     * range: Search range,
+     * match: Opponent,
+     * order: Match priority. Determined randomly.
      * } */
     playerPool = new Map()
 
@@ -71,10 +71,10 @@ class Pairing
     }
 
     /**
-     * Encuentra a todos los jugadores en la cola de matchmaking basados en un márgen de elo.
-     * @param playerId Id. de sesión del jugador.
-     * @param playerElo Elo del jugador.
-     * @param range Rango de márgen de elo para buscar.
+     * Finds
+     * @param playerId Player session Id.
+     * @param playerElo Player elo.
+     * @param range Elo search margin/offset.
      * @returns {Promise<JSON>}
      */
     find(playerId, playerElo, range)
@@ -92,9 +92,9 @@ class Pairing
     }
 
     /**
-     * Busca entre los jugadores y selecciona el que menos diferencia de elo tiene.
-     * @param playerId Id. de sesión del jugador.
-     * @param playerElo Elo del jugador.
+     * Searches for players and selects whoever has the lowest elo difference.
+     * @param playerId Player session Id.
+     * @param playerElo Player elo.
      * @returns {Promise<JSON>}
      */
     search(playerId, playerElo)
@@ -102,7 +102,7 @@ class Pairing
         return new Promise(async res =>
         {
             let order = Math.floor(Math.random() * 100)
-            // Agregar el jugador a la lista de búsqueda
+            // Adds the player to the matchmaking queue.
             this.playerPool.set(playerId, {
                 elo: playerElo,
                 range: 50,

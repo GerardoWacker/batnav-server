@@ -1,7 +1,7 @@
 {
-  "name": "damas-server",
-  "version": "2022.403.0",
-  "description": "Servidor para el juego de Damas (https.//github.com/gerardowacker/damas)",
+  "name": "batnav-server",
+  "version": "2022.404.0",
+  "description": "BatNav game server. Handles API and real-time connections. (https.//github.com/gerardowacker/batnav)",
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gerardowacker/damas-server.git"
+    "url": "git+https://github.com/gerardowacker/batnav-server.git"
   },
   "author": "Gerardo Wacker (https://github.com/gerardowacker)",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/gerardowacker/damas-server/issues"
+    "url": "https://github.com/gerardowacker/batnav-server/issues"
   },
-  "homepage": "https://github.com/gerardowacker/damas-server#readme",
+  "homepage": "https://github.com/gerardowacker/batnav-server#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.2",

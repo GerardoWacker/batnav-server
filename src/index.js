@@ -1,5 +1,5 @@
 /**
- * Servidor para juego
+ * BatNav server
  * @author Gerardo Wacker
  */
 
