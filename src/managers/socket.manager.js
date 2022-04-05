@@ -42,9 +42,19 @@ class Socket
             this.io.on('connection', socket =>
             {
                 console.log('⬇️ (Socket) ¡Conexión entrante!')
+
+                // Authentication.
                 socket.on('authenticate', uuid => this.authenticate(socket, uuid))
+
+                // Matchmaking queue.
                 socket.on('join-ranked-queue', uuid => this.joinRankedQueue(socket, uuid))
                 socket.on('leave-ranked-queue', uuid => this.leaveRankedQueue(socket, uuid))
+
+                // Match development.
+                socket.on('match-throw-bomb', data => this.matchThrowBomb(socket, data))
+                socket.on('match-set-ships', data => this.matchSetShips(socket, data))
+
+                // Disconnection.
                 socket.on('disconnect', () => this.disconnect(socket))
             })
             this.io.listen(port)
@@ -192,6 +202,66 @@ class Socket
                 retry: false,
                 message: "El usuario abandonó la lista de espera."
             }
+        })
+    }
+
+    /**
+     * Method that executes when a player throws a bomb in a match.
+     * @param socket Bilateral connection socket between server and client.
+     * @param data Data object that includes match and player information.
+     */
+    matchThrowBomb(socket, data)
+    {
+        this.matchManager.throwBomb(data.matchId, data.playerId, data.coordinates).then(response =>
+        {
+            if (response.success)
+            {
+                let match = this.matchManager.getMatch(data.matchId)
+                if (match.player1.id === data.playerId)
+                {
+                    this.io.to(match.player2.id).emit('match-receive-bomb', {
+                        coordinates: data.coordinates
+                    })
+                }
+                else if (match.player2.id === data.playerId)
+                {
+                    this.io.to(match.player1.id).emit('match-receive-bomb', {
+                        coordinates: data.coordinates
+                    })
+                }
+            }
+
+            return socket.emit('match-bomb-thrown', response)
+        })
+    }
+
+    /**
+     * Method that executes when a player sets the ships' position in the beginning of a match.
+     * @param socket Bilateral connection socket between server and client.
+     * @param data Data object that includes match and player information.
+     */
+    matchSetShips(socket, data)
+    {
+        this.matchManager.setShips(data.matchId, data.playerId, data.coordinates).then(response =>
+        {
+            if(response.success)
+            {
+                let match = this.matchManager.getMatch(data.matchId)
+                if (match.player1.id === data.playerId)
+                {
+                    this.io.to(match.player2.id).emit('match-receive-ships', {
+                        coordinates: data.coordinates
+                    })
+                }
+                else if (match.player2.id === data.playerId)
+                {
+                    this.io.to(match.player1.id).emit('match-receive-ships', {
+                        coordinates: data.coordinates
+                    })
+                }
+            }
+
+            return socket.emit('match-ships-set', response)
         })
     }
 
