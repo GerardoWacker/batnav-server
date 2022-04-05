@@ -219,13 +219,13 @@ class Socket
                 let match = this.matchManager.getMatch(data.matchId)
                 if (match.player1.id === data.playerId)
                 {
-                    this.io.to(match.player2.id).emit('match-receive-bomb', {
+                    this.io.to(match.player2.id).emit('match-bomb-receive', {
                         coordinates: data.coordinates
                     })
                 }
                 else if (match.player2.id === data.playerId)
                 {
-                    this.io.to(match.player1.id).emit('match-receive-bomb', {
+                    this.io.to(match.player1.id).emit('match-bomb-receive', {
                         coordinates: data.coordinates
                     })
                 }
@@ -249,14 +249,14 @@ class Socket
                 let match = this.matchManager.getMatch(data.matchId)
                 if (match.player1.id === data.playerId)
                 {
-                    this.io.to(match.player2.id).emit('match-receive-ships', {
-                        coordinates: data.coordinates
+                    this.io.to(match.player2.id).emit('match-ships-receive', {
+                        success: true
                     })
                 }
                 else if (match.player2.id === data.playerId)
                 {
-                    this.io.to(match.player1.id).emit('match-receive-ships', {
-                        coordinates: data.coordinates
+                    this.io.to(match.player1.id).emit('match-ships-receive', {
+                        success: true
                     })
                 }
             }
