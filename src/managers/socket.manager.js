@@ -249,13 +249,13 @@ class Socket
                 let match = this.matchManager.getMatch(data.matchId)
                 if (match.player1.id === data.playerId)
                 {
-                    this.io.to(match.player2.id).emit('match-ships-receive', {
+                    this.io.to(this.playerPool.get(match.player2.id)).emit('match-ships-receive', {
                         success: true
                     })
                 }
                 else if (match.player2.id === data.playerId)
                 {
-                    this.io.to(match.player1.id).emit('match-ships-receive', {
+                    this.io.to(this.playerPool.get(match.player1.id)).emit('match-ships-receive', {
                         success: true
                     })
                 }
