@@ -118,11 +118,11 @@ class Match
                     match.player1.bombs.push(coordinates)
                     if (match.player2.ships.includes(coordinates))
                     {
-                        res({success: true, content: true})
+                        res({success: true, content: {coordinates: coordinates, hasHit: true}})
                     }
                     else
                     {
-                        res({success: true, content: false})
+                        res({success: true, content: {coordinates: coordinates, hasHit: false}})
                     }
                 }
                 else if (match.player2.id === playerId)
@@ -130,11 +130,11 @@ class Match
                     match.player2.bombs.push(coordinates)
                     if (match.player1.ships.includes(coordinates))
                     {
-                        res({success: true, content: true})
+                        res({success: true, content: {coordinates: coordinates, hasHit: true}})
                     }
                     else
                     {
-                        res({success: true, content: false})
+                        res({success: true, content: {coordinates: coordinates, hasHit: false}})
                     }
                 }
                 else
