@@ -5,12 +5,16 @@ class Match
     /** Structure -> Match Id. : {
      * player1: {
      *     id: Session Id.,
-     *     ships: Ship's occupied points in coordinates format,
+     *     ships: [
+     *         [Ship's occupied points in coordinates format]
+     *     ],
      *     bombs: Thrown bombs.
      * },
      * player2: {
      *     id: Session Id.,
-     *     ships: Ship's occupied points in coordinates format,
+     *     ships: [
+     *         [Ship's occupied points in coordinates format]
+     *     ],
      *     bombs: Thrown bombs.
      * }
      * }*/
@@ -67,7 +71,7 @@ class Match
      * Sets the ship's position in the beginning of a match.
      * @param matchId Match Id.
      * @param playerId Player Id.
-     * @param coordinates Ship's occupied points in coordinates format.
+     * @param coordinates List of ships' occupied points in coordinates format.
      * @returns {Promise<JSON>}
      */
     setShips(matchId, playerId, coordinates)
@@ -79,12 +83,12 @@ class Match
                 let match = this.currentMatches.get(matchId)
                 if (match.player1.id === playerId)
                 {
-                    match.player1.ships = coordinates
+                    this.currentMatches.get(matchId).player1.ships = coordinates
                     res({success: true, content: "Se han establecido los barcos."})
                 }
                 else if (match.player2.id === playerId)
                 {
-                    match.player2.ships = coordinates
+                    this.currentMatches.get(matchId).player2.ships = coordinates
                     res({success: true, content: "Se han establecido los barcos."})
                 }
                 else
@@ -115,27 +119,76 @@ class Match
                 let match = this.currentMatches.get(matchId)
                 if (match.player1.id === playerId)
                 {
+                    // Push the bomb's coordinates
                     match.player1.bombs.push(coordinates)
-                    if (match.player2.ships.includes(coordinates))
+
+                    // Now, iterate over every ship.
+                    // Note: Every "ship" is saved as an array of coordinates.
+                    match.player2.ships.forEach(shipCoords =>
                     {
-                        res({success: true, content: {coordinates: coordinates, hasHit: true}})
-                    }
-                    else
-                    {
-                        res({success: true, content: {coordinates: coordinates, hasHit: false}})
-                    }
+                        if (shipCoords.includes(coordinates))
+                        {
+                            // Create an intersection between the player's bombs and the ship's coordinates.
+                            const damagedShipCoords = shipCoords.filter(value => match.player1.bombs.includes(value))
+
+                            // Compare the ship's damaged coordinates with the complete occupation.
+                            // Note: If the ship is completely damaged, then they technically would be equal.
+                            if (damagedShipCoords === shipCoords)
+                            {
+                                return res({
+                                    success: true,
+                                    content: {coordinates: coordinates, hasHit: true, hasSunk: true}
+                                })
+                            }
+                            else
+                            {
+                                return res({
+                                    success: true,
+                                    content: {coordinates: coordinates, hasHit: true, hasSunk: false}
+                                })
+                            }
+                        }
+                    })
+
+                    // If none of the previous conditions are met, then nothing has actually changed.
+                    // Return false values in both cases.
+                    return res({
+                        success: true,
+                        content: {coordinates: coordinates, hasHit: false, hasSunk: false}
+                    })
                 }
                 else if (match.player2.id === playerId)
                 {
+                    // It's repetiiitioooon, I'm coooming baaaack tooo yooouuu.
                     match.player2.bombs.push(coordinates)
-                    if (match.player1.ships.includes(coordinates))
+
+                    match.player1.ships.forEach(shipCoords =>
                     {
-                        res({success: true, content: {coordinates: coordinates, hasHit: true}})
-                    }
-                    else
-                    {
-                        res({success: true, content: {coordinates: coordinates, hasHit: false}})
-                    }
+                        if (shipCoords.includes(coordinates))
+                        {
+                            const damagedShipCoords = shipCoords.filter(value => match.player2.bombs.includes(value))
+
+                            if (damagedShipCoords === shipCoords)
+                            {
+                                return res({
+                                    success: true,
+                                    content: {coordinates: coordinates, hasHit: true, hasSunk: true}
+                                })
+                            }
+                            else
+                            {
+                                return res({
+                                    success: true,
+                                    content: {coordinates: coordinates, hasHit: true, hasSunk: false}
+                                })
+                            }
+                        }
+                    })
+
+                    return res({
+                        success: true,
+                        content: {coordinates: coordinates, hasHit: false, hasSunk: false}
+                    })
                 }
                 else
                 {
