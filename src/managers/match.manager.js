@@ -68,10 +68,10 @@ class Match
     }
 
     /**
-     * Sets the ship's position in the beginning of a match.
+     * Sets the ships' position in the beginning of a match.
      * @param matchId Match Id.
      * @param playerId Player Id.
-     * @param coordinates List of ships' occupied points in coordinates format.
+     * @param coordinates Array of arrays containing ship positions in a 2-item-array format.
      * @returns {Promise<JSON>}
      */
     setShips(matchId, playerId, coordinates)
