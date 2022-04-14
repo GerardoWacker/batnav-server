@@ -1,6 +1,6 @@
 {
   "name": "batnav-server",
-  "version": "2022.404.0",
+  "version": "2022.407.0",
   "description": "BatNav game server. Handles API and real-time connections. (https.//github.com/gerardowacker/batnav)",
   "main": "src/index.js",
   "scripts": {
