@@ -84,12 +84,12 @@ class Match
                 if (match.player1.id === playerId)
                 {
                     this.currentMatches.get(matchId).player1.ships = coordinates
-                    res({success: true, content: "Se han establecido los barcos."})
+                    res({success: true, content: coordinates})
                 }
                 else if (match.player2.id === playerId)
                 {
                     this.currentMatches.get(matchId).player2.ships = coordinates
-                    res({success: true, content: "Se han establecido los barcos."})
+                    res({success: true, content: coordinates})
                 }
                 else
                 {
