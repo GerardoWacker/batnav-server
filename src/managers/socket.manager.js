@@ -283,6 +283,7 @@ class Socket
                 let match = this.matchManager.getMatch(uuid)
                 if (match)
                 {
+                    console.log(match)
                     if (match.player1.id === uuid)
                     {
                         // TODO: End match with player2 win.
