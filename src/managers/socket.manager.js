@@ -280,10 +280,11 @@ class Socket
                     this.pairingManager.playerPool.delete(uuid)
                 }
 
-                let match = this.matchManager.getMatch(uuid)
-                if (match)
+                let matchId = this.matchManager.getMatch(uuid)
+                if (matchId)
                 {
-                    console.log(match)
+                    let match = this.matchManager.currentMatches.get(matchId)
+                    
                     if (match.player1.id === uuid)
                     {
                         // TODO: End match with player2 win.
