@@ -83,7 +83,7 @@ class Match
                 let match = this.currentMatches.get(matchId);
                 if (match.player1.id === playerId)
                 {
-                    if (coordinates.length < 8)
+                    if (coordinates.length === 8)
                     {
                         this.currentMatches.get(matchId).player1.ships = coordinates;
                         res({success: true, content: coordinates});
@@ -95,7 +95,7 @@ class Match
                 }
                 else if (match.player2.id === playerId)
                 {
-                    if (coordinates.length < 8)
+                    if (coordinates.length === 8)
                     {
                         this.currentMatches.get(matchId).player2.ships = coordinates;
                         res({success: true, content: coordinates});
