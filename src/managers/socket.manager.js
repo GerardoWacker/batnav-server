@@ -210,13 +210,14 @@ class Socket
      * @param socket Bilateral connection socket between server and client.
      * @param data Data object that includes match and player information.
      */
-    matchThrowBomb(socket, data)
+    matchThrowBomb(socket, rawData)
     {
+        let data = JSON.parse(rawData)
         this.matchManager.throwBomb(data.matchId, data.playerId, data.coordinates).then(response =>
         {
             if (response.success)
             {
-                let match = this.matchManager.getMatch(data.matchId)
+                let match = this.matchManager.currentMatches.get(data.matchId)
                 if (match.player1.id === data.playerId)
                 {
                     this.io.to(match.player2.id).emit('match-bomb-receive', {
