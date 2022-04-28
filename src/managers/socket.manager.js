@@ -246,7 +246,7 @@ class Socket
         {
             if(response.success)
             {
-                let match = this.matchManager.getMatch(data.matchId)
+                let match = this.matchManager.currentMatches.get(data.matchId)
                 if (match.player1.id === data.playerId)
                 {
                     this.io.to(this.playerPool.get(match.player2.id)).emit('match-ships-receive', {
