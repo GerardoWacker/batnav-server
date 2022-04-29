@@ -67,6 +67,31 @@ class Match
         return null;
     }
 
+    shipHasCoordinates(ship, coordinates)
+    {
+        for (let i = 0; i < ship.length; i++)
+        {
+            let checker = false
+            for (let j = 0; j < ship[i].length; j++)
+            {
+                if (ship[i][j] === coordinates[j])
+                {
+                    checker = true
+                }
+                else
+                {
+                    checker = false
+                    break
+                }
+            }
+            if (checker)
+            {
+                return true
+            }
+        }
+        return false
+    }
+
     /**
      * Sets the ships' position in the beginning of a match.
      * @param matchId Match Id.
@@ -147,7 +172,7 @@ class Match
                     // Note: Every "ship" is saved as an array of coordinates.
                     match.player2.ships.forEach((shipCoords) =>
                     {
-                        if (shipCoords.includes(coordinates))
+                        if (this.shipHasCoordinates(shipCoords, coordinates))
                         {
                             // Create an intersection between the player's bombs and the ship's coordinates.
                             const damagedShipCoords = shipCoords.filter((value) =>
@@ -156,7 +181,7 @@ class Match
 
                             // Compare the ship's damaged coordinates with the complete occupation.
                             // Note: If the ship is completely damaged, then they technically would be equal.
-                            if (damagedShipCoords === shipCoords)
+                            if (damagedShipCoords.equals(shipCoords))
                             {
                                 return res({
                                     success: true,
@@ -205,7 +230,7 @@ class Match
                                 match.player2.bombs.includes(value)
                             );
 
-                            if (damagedShipCoords === shipCoords)
+                            if (damagedShipCoords.equals(shipCoords))
                             {
                                 return res({
                                     success: true,
@@ -258,6 +283,31 @@ class Match
         });
     }
 }
+
+Array.prototype.equals = function (array)
+{
+    if (!array)
+        return false;
+
+    if (this.length !== array.length)
+        return false;
+
+    for (let i = 0, l = this.length; i < l; i++)
+    {
+        if (this[i] instanceof Array && array[i] instanceof Array)
+        {
+            if (!this[i].equals(array[i]))
+                return false;
+        }
+        else if (this[i] !== array[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
 module.exports = Match;
 
