@@ -218,6 +218,7 @@ class Socket
             if (response.success)
             {
                 let match = this.matchManager.currentMatches.get(data.matchId)
+
                 if (match.player1.id === data.playerId)
                 {
                     this.io.to(match.player2.id).emit('match-bomb-receive', {
@@ -230,6 +231,8 @@ class Socket
                         coordinates: data.coordinates
                     })
                 }
+
+                this.handleTurn(match)
             }
 
             return socket.emit('match-bomb-thrown', response)
@@ -245,25 +248,113 @@ class Socket
     {
         this.matchManager.setShips(data.matchId, data.playerId, data.coordinates).then(response =>
         {
-            if(response.success)
+            socket.emit('match-ships-set', response)
+
+            if (response.success)
             {
                 let match = this.matchManager.currentMatches.get(data.matchId)
                 if (match.player1.id === data.playerId)
                 {
-                    this.io.to(this.playerPool.get(match.player2.id)).emit('match-ships-receive', {
-                        success: true
-                    })
+                    if (match.player2.ships.length !== 0)
+                    {
+                        this.io.to(this.playerPool.get(match.player2.id)).emit('match-start', {
+                            success: true
+                        })
+                        socket.emit('match-start', {
+                            success: true
+                        })
+
+                        this.matchManager.start(data.matchId).then(response => {
+                            this.handleTurn(match)
+                        })
+                    }
                 }
                 else if (match.player2.id === data.playerId)
                 {
-                    this.io.to(this.playerPool.get(match.player1.id)).emit('match-ships-receive', {
-                        success: true
-                    })
+                    if (match.player1.ships.length !== 0)
+                    {
+                        this.io.to(this.playerPool.get(match.player1.id)).emit('match-start', {
+                            success: true
+                        })
+                        socket.emit('match-start', {
+                            success: true
+                        })
+
+                        this.matchManager.start(data.matchId).then(response => {
+                            this.handleTurn(match)
+                        })
+                    }
                 }
             }
-
-            return socket.emit('match-ships-set', response)
         })
+    }
+
+    handleTurn(match)
+    {
+        // Set current turn to an increment of 1.
+        match.turn.number += 1
+
+        // Save the current turn number.
+        let currentTurn = match.turn.number
+
+        // Set turn time (in milliseconds).
+        let turnTime = 30000
+
+        // Check for possible turn player types.
+        switch (match.turn.player)
+        {
+            case null:
+            {
+                match.turn.player = match.player1.id
+                this.io.to(this.playerPool.get(match.player1.id)).emit('match-turn', {
+                    success: true, content: true
+                })
+                this.io.to(this.playerPool.get(match.player2.id)).emit('match-turn', {
+                    success: true, content: false
+                })
+                console.log('Turn switch', match)
+                break
+            }
+            case match.player1.id:
+            {
+                match.turn.player = match.player2.id
+                this.io.to(this.playerPool.get(match.player2.id)).emit('match-turn', {
+                    success: true, content: true
+                })
+                this.io.to(this.playerPool.get(match.player1.id)).emit('match-turn', {
+                    success: true, content: false
+                })
+                console.log('Turn switch', match)
+                break
+            }
+            case match.player2.id:
+            {
+                match.turn.player = match.player1.id
+                this.io.to(this.playerPool.get(match.player1.id)).emit('match-turn', {
+                    success: true, content: true
+                })
+                this.io.to(this.playerPool.get(match.player2.id)).emit('match-turn', {
+                    success: true, content: false
+                })
+                console.log('Turn switch', match)
+                break
+            }
+            default:
+            {
+                // ????????????????????????????????????????????
+                console.log("¿Eh?")
+            }
+        }
+
+        // Make a timeout. This way, we can check if any of the users made a move. If they didn't, just pass to the
+        // next player. This method also gives a possible "auto-move" for a potential AI in the future.
+        setTimeout(() =>
+        {
+            if (currentTurn === match.turn.number)
+            {
+                this.handleTurn(match)
+            }
+        }, turnTime)
     }
 
     /**
@@ -285,7 +376,7 @@ class Socket
                 if (matchId)
                 {
                     let match = this.matchManager.currentMatches.get(matchId)
-                    
+
                     if (match.player1.id === uuid)
                     {
                         // TODO: End match with player2 win.

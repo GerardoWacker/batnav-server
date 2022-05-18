@@ -3,6 +3,10 @@ const {v4: uuidv4} = require("uuid");
 class Match
 {
     /** Structure -> Match Id. : {
+     * turn: {
+     *     player: Whose turn is it.
+     *     number: Number of turns.
+     * }
      * player1: {
      *     id: Session Id.,
      *     ships: [
@@ -37,6 +41,7 @@ class Match
         {
             let uuid = uuidv4();
             this.currentMatches.set(uuid, {
+                turn: null,
                 player1: {
                     id: player1Id,
                     ships: [],
@@ -50,6 +55,24 @@ class Match
             });
             res({success: true, content: uuid});
         });
+    }
+
+    /**
+     * Sets everything up for the first turn.
+     * @param match Match object.
+     */
+    start(match)
+    {
+        return new Promise(res =>
+        {
+            // Set current turn to the player1's Id.
+            match.turn = {
+                player: null,
+                number: 0
+            }
+
+            res({success: true})
+        })
     }
 
     /**
@@ -163,6 +186,10 @@ class Match
             if (this.currentMatches.has(matchId))
             {
                 let match = this.currentMatches.get(matchId);
+
+                // Check if it's the player's turn.
+                if (match.turn.player !== playerId) return res({success: false, content: "¡No es tu turno!"})
+
                 if (match.player1.id === playerId)
                 {
                     // Push the bomb's coordinates
