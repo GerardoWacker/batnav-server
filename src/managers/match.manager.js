@@ -206,6 +206,8 @@ class Match
                                 match.player1.bombs.includes(value)
                             );
 
+                            console.log(damagedShipCoords)
+
                             // Compare the ship's damaged coordinates with the complete occupation.
                             // Note: If the ship is completely damaged, then they technically would be equal.
                             if (damagedShipCoords.equals(shipCoords))
@@ -256,6 +258,8 @@ class Match
                             const damagedShipCoords = shipCoords.filter((value) =>
                                 match.player2.bombs.includes(value)
                             );
+
+                            console.log(damagedShipCoords)
 
                             if (damagedShipCoords.equals(shipCoords))
                             {
