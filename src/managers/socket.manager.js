@@ -295,7 +295,7 @@ class Socket
         match.turn.number += 1
 
         // Save the current turn number.
-        let currentTurn = match.turn.number
+        const currentTurn = match.turn.number
 
         // Set turn time (in milliseconds).
         let turnTime = 30000
