@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/gerardowacker/batnav-server.git"
   },
+  "engines": {
+    "node": "17.x"
+  },
   "author": "Gerardo Wacker (https://github.com/gerardowacker)",
   "license": "GPL-3.0",
   "bugs": {
