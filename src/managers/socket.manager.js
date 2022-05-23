@@ -17,20 +17,21 @@ class Socket
         this.pairingManager = pairingManager
     }
 
-    io = new Server()
-
     /** Structure -> UUID session identifier : Socket Id. */
     playerPool = new Map()
 
     /**
      * Starts the Socket server.
-     * @param port Port in which the server will be running.
+     * @param httpServer HTTP server in which the websocket would be started.
      * @returns {Promise<unknown>}
      */
-    start(port)
+    start(httpServer)
     {
         return new Promise(res =>
         {
+            // Create the websocket behind the main http layer.
+            this.io = new Server(httpServer)
+
             this.database.connect()
                 .then(() => console.log('📝 (Socket) Conexión con base de datos establecida.'))
                 .catch(err =>
@@ -57,7 +58,7 @@ class Socket
                 // Disconnection.
                 socket.on('disconnect', () => this.disconnect(socket))
             })
-            this.io.listen(port)
+
             res(this.io)
         })
     }
@@ -264,7 +265,8 @@ class Socket
                             success: true
                         })
 
-                        this.matchManager.start(data.matchId).then(response => {
+                        this.matchManager.start(data.matchId).then(response =>
+                        {
                             this.handleTurn(match)
                         })
                     }
@@ -280,7 +282,8 @@ class Socket
                             success: true
                         })
 
-                        this.matchManager.start(data.matchId).then(response => {
+                        this.matchManager.start(data.matchId).then(response =>
+                        {
                             this.handleTurn(match)
                         })
                     }

@@ -1,4 +1,5 @@
 const express = require('express')
+const http = require('http')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
@@ -20,10 +21,9 @@ class Web
 
     /**
      * Starts the express server and assigns routes.
-     * @param port Port in which the server will be running.
-     * @returns {Promise<JSON>}
+     * @returns {Promise<Server>}
      */
-    start(port)
+    start()
     {
         return new Promise(res =>
         {
@@ -35,7 +35,8 @@ class Web
 
             this.router.create().then(routes => app.use('/', routes))
 
-            app.listen(port, () => res(app))
+            const server = http.createServer(app)
+            res(server)
         })
     }
 }

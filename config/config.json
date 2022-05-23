@@ -1,8 +1,4 @@
 {
-  "port": {
-    "web": 1301,
-    "socket": 1302
-  },
   "connection": {
     "user": "user",
     "address": "cluster.url",
