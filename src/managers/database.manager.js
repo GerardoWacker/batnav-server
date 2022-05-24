@@ -21,11 +21,12 @@ class Database
     {
         return new Promise(async res =>
         {
-            let endpoint = `mongodb+srv://${config.connection.user}:${config.connection.password}@${config.connection.address}/${config.connection.database}?retryWrites=true&w=majority`
+            // Use environmental variables, or use the config file. One or the other should work.
+            let endpoint = `mongodb+srv://${process.env.DB_USER || config.connection.user}:${process.env.DB_PASS || config.connection.password}@${process.env.DB_ADDR || config.connection.address}/${process.env.DB_NAME || config.connection.database}?retryWrites=true&w=majority`
             const client = new MongoClient(endpoint)
 
             let database = await client.connect()
-            this.userDatabase = database.db(config.connection.database).collection(config.connection.users)
+            this.userDatabase = database.db(process.env.DB_NAME || config.connection.database).collection(process.env.DB_USERS_COLLECTION || config.connection.users)
 
             res(this)
         })
