@@ -243,10 +243,11 @@ class Socket
     /**
      * Method that executes when a player sets the ships' position in the beginning of a match.
      * @param socket Bilateral connection socket between server and client.
-     * @param data Data object that includes match and player information.
+     * @param rawData Data object that includes match and player information.
      */
-    matchSetShips(socket, data)
+    matchSetShips(socket, rawData)
     {
+        let data = JSON.parse(rawData)
         this.matchManager.setShips(data.matchId, data.playerId, data.coordinates).then(response =>
         {
             socket.emit('match-ships-set', response)
@@ -265,7 +266,7 @@ class Socket
                             success: true
                         })
 
-                        this.matchManager.start(data.matchId).then(response =>
+                        this.matchManager.start(match).then(response =>
                         {
                             this.handleTurn(match)
                         })
@@ -282,7 +283,7 @@ class Socket
                             success: true
                         })
 
-                        this.matchManager.start(data.matchId).then(response =>
+                        this.matchManager.start(match).then(response =>
                         {
                             this.handleTurn(match)
                         })
