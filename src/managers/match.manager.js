@@ -253,13 +253,13 @@ class Match
 
                     match.player1.ships.forEach((shipCoords) =>
                     {
-                        if (shipCoords.includes(coordinates))
+                        if (this.shipHasCoordinates(shipCoords, coordinates))
                         {
                             const damagedShipCoords = shipCoords.filter((value) =>
                                 match.player2.bombs.includes(value)
                             );
 
-                            console.log(damagedShipCoords)
+                            console.log('Damaged ship coordinates: ', damagedShipCoords)
 
                             if (damagedShipCoords.equals(shipCoords))
                             {
