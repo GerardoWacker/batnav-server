@@ -216,6 +216,7 @@ class Socket
         let data = JSON.parse(rawData)
         this.matchManager.throwBomb(data.matchId, data.playerId, data.coordinates).then(response =>
         {
+            console.log(response)
             if (response.success)
             {
                 let match = this.matchManager.currentMatches.get(data.matchId)
@@ -316,7 +317,6 @@ class Socket
                 this.io.to(this.playerPool.get(match.player2.id)).emit('match-turn', {
                     success: true, content: false
                 })
-                console.log('Turn switch', match)
                 break
             }
             case match.player1.id:
@@ -328,7 +328,6 @@ class Socket
                 this.io.to(this.playerPool.get(match.player1.id)).emit('match-turn', {
                     success: true, content: false
                 })
-                console.log('Turn switch', match)
                 break
             }
             case match.player2.id:
@@ -340,7 +339,6 @@ class Socket
                 this.io.to(this.playerPool.get(match.player2.id)).emit('match-turn', {
                     success: true, content: false
                 })
-                console.log('Turn switch', match)
                 break
             }
             default:
