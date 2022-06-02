@@ -209,7 +209,7 @@ class Socket
     /**
      * Method that executes when a player throws a bomb in a match.
      * @param socket Bilateral connection socket between server and client.
-     * @param data Data object that includes match and player information.
+     * @param rawData Data object that includes match and player information.
      */
     matchThrowBomb(socket, rawData)
     {
