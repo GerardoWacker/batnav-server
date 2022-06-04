@@ -338,9 +338,7 @@ class Database
 
                             return res({
                                 success: true,
-                                content: {
-                                    eloDifference: eloDifference
-                                }
+                                content: eloDifference
                             })
                         })
                     })
