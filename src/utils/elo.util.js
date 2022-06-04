@@ -1,4 +1,4 @@
-export class EloUtil
+class EloUtil
 {
     static calculate(elo1, elo2)
     {
