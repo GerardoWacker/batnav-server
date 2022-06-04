@@ -4,6 +4,7 @@
     "address": "cluster.url",
     "password": "password",
     "database": "database",
-    "users": "users_collection"
+    "users": "users_collection",
+    "matches": "matches_collection"
   }
 }
