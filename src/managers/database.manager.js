@@ -27,7 +27,9 @@ class Database
             const client = new MongoClient(endpoint)
 
             let database = await client.connect()
+
             this.userDatabase = database.db(process.env.DB_NAME || config.connection.database).collection(process.env.DB_USERS_COLLECTION || config.connection.users)
+            this.matchDatabase = database.db(process.env.DB_NAME || config.connection.database).collection(process.env.DB_MATCH_COLLECTION || config.connection.matches)
 
             res(this)
         })
@@ -207,6 +209,46 @@ class Database
                 delete user._id
 
                 return res({success: true, content: user})
+            })
+        })
+    }
+
+    /**
+     * Saves a match into the database
+     * @param match Match object.
+     * @param winnerId Winner's ObjectId.
+     * @param loserId Loser's ObjectId.
+     * @returns {Promise<JSON>}
+     */
+    saveMatch(match, winnerId, loserId)
+    {
+        return new Promise(res =>
+        {
+            const matchToAdd = {
+                turns: match.turn.number,
+                winner: {
+                    id: winnerId,
+                    bombs: match.player1.bombs
+                },
+                loser: {
+                    id: loserId,
+                    bombs: match.player2.bombs
+                },
+                time: Date.now()
+            }
+
+            this.matchDatabase.insertOne(matchToAdd, (err, result) =>
+            {
+                if (err)
+                    return res({
+                        success: false,
+                        content: "Hubo un error al intentar guardar la partida."
+                    })
+
+                res({
+                    success: true,
+                    content: result.insertedId
+                })
             })
         })
     }
