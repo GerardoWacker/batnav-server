@@ -223,18 +223,18 @@ class Socket
 
                 if (match.player1.id === data.playerId)
                 {
-                    this.io.to(match.player2.id).emit('match-bomb-receive', {
+                    this.io.to(this.playerPool.get(match.player2.id)).emit('match-bomb-receive', {
                         coordinates: data.coordinates
                     })
                 }
                 else if (match.player2.id === data.playerId)
                 {
-                    this.io.to(match.player1.id).emit('match-bomb-receive', {
+                    this.io.to(this.playerPool.get(match.player1.id)).emit('match-bomb-receive', {
                         coordinates: data.coordinates
                     })
                 }
 
-                this.handleTurn(match)
+                this.handleTurn(data.matchId, match)
             }
 
             return socket.emit('match-bomb-thrown', response)
@@ -269,7 +269,7 @@ class Socket
 
                         this.matchManager.start(match).then(response =>
                         {
-                            this.handleTurn(match)
+                            this.handleTurn(data.matchId, match)
                         })
                     }
                 }
@@ -286,7 +286,7 @@ class Socket
 
                         this.matchManager.start(match).then(response =>
                         {
-                            this.handleTurn(match)
+                            this.handleTurn(data.matchId, match)
                         })
                     }
                 }
@@ -294,7 +294,7 @@ class Socket
         })
     }
 
-    handleTurn(match)
+    handleTurn(matchId, match)
     {
         // Set current turn to an increment of 1.
         match.turn.number += 1
@@ -321,6 +321,28 @@ class Socket
             }
             case match.player1.id:
             {
+                if (match.player1.sunk === 8)
+                {
+                    this.matchManager.endMatch(match.player1.id, match.player2.id).then(result =>
+                    {
+                        if (!success)
+                            return console.log("bruh" + result)
+
+                        this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
+                            win: true,
+                            elo: result.eloDifference,
+                            match: matchId
+                        })
+                        this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
+                            win: false,
+                            elo: result.eloDifference,
+                            match: matchId
+                        })
+                    })
+
+                    return
+                }
+
                 match.turn.player = match.player2.id
                 this.io.to(this.playerPool.get(match.player2.id)).emit('match-turn', {
                     success: true, content: true
@@ -332,6 +354,28 @@ class Socket
             }
             case match.player2.id:
             {
+                if (match.player2.sunk === 8)
+                {
+                    this.matchManager.endMatch(match.player2.id, match.player1.id).then(result =>
+                    {
+                        if (!success)
+                            return console.log("bruh" + result)
+
+                        this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
+                            win: true,
+                            elo: result.eloDifference,
+                            match: matchId
+                        })
+                        this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
+                            win: false,
+                            elo: result.eloDifference,
+                            match: matchId
+                        })
+                    })
+
+                    return
+                }
+
                 match.turn.player = match.player1.id
                 this.io.to(this.playerPool.get(match.player1.id)).emit('match-turn', {
                     success: true, content: true
@@ -354,7 +398,7 @@ class Socket
         {
             if (currentTurn === match.turn.number)
             {
-                this.handleTurn(match)
+                this.handleTurn(matchId, match)
             }
         }, turnTime)
     }
