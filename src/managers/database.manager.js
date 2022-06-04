@@ -1,6 +1,7 @@
 const {MongoClient} = require('mongodb')
 const config = require('../../config/config.json')
 const bcrypt = require('bcrypt')
+const {EloUtil} = require("../utils/elo.util");
 
 class Database
 {
@@ -206,6 +207,97 @@ class Database
                 delete user._id
 
                 return res({success: true, content: user})
+            })
+        })
+    }
+
+    updateElo(winnerId, loserId)
+    {
+        return new Promise(res =>
+        {
+            this.userDatabase.findOne({_id: winnerId}, (err, winner) =>
+            {
+                if (err)
+                    return res({
+                        success: false,
+                        content: "Hubo un error al buscar el elo del ganador: " + err.errmsg
+                    })
+                if (!winner)
+                    return res({
+                        success: false,
+                        content: "El ganador no fue encontrado en la base de datos."
+                    })
+
+                let winnerElo = winner.stats.elo
+
+                this.userDatabase.findOne({_id: loserId}, (err, loser) =>
+                {
+                    if (err)
+                        return res({
+                            success: false,
+                            content: "Hubo un error al buscar el elo del perdedor: " + err.errmsg
+                        })
+
+                    if (!loser)
+                        return res({
+                            success: false,
+                            content: "El perdedor no fue encontrado en la base de datos."
+                        })
+
+                    let loserElo = loser.stats.elo
+
+                    let eloDifference = EloUtil.calculate(winnerElo, loserElo)
+
+                    this.userDatabase.updateOne({_id: winnerId}, {
+                        $set: {
+                            stats: {
+                                elo: winnerElo + eloDifference
+                            }
+                        }
+                    }, (err, result) =>
+                    {
+                        if (err)
+                            return res({
+                                success: false,
+                                content: "Hubo un error actualizando el elo del ganador (1): " + err.errmsg
+                            })
+
+                        if (!result)
+                            return res({
+                                success: false,
+                                content: "Hubo un error actualizando el elo del ganador (2)."
+                            })
+
+                        this.userDatabase.updateOne({_id: loserId}, {
+                            $set: {
+                                stats: {
+                                    elo: loserElo - eloDifference
+                                }
+                            }
+                        }, (err, result) =>
+                        {
+                            if (err)
+                                return res({
+                                    success: false,
+                                    content: "Hubo un error actualizando el elo del perdedor (1): " + err.errmsg
+                                })
+
+                            if (!result)
+                                return res({
+                                    success: false,
+                                    content: "Hubo un error actualizando el elo del perdedor (2)."
+                                })
+
+                            return res({
+                                success: true,
+                                content: {
+                                    eloDifference: eloDifference
+                                }
+                            })
+                        })
+                    })
+
+                })
             })
         })
     }
