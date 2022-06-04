@@ -13,6 +13,7 @@ class Match
      *         [Ship's occupied points in coordinates format]
      *     ],
      *     bombs: Thrown bombs.
+     *     sunk: Sunk ships (opponent's).
      * },
      * player2: {
      *     id: Session Id.,
@@ -20,13 +21,15 @@ class Match
      *         [Ship's occupied points in coordinates format]
      *     ],
      *     bombs: Thrown bombs.
+     *     sunk: Sunk ships (opponent's).
      * }
      * }*/
     currentMatches = new Map();
 
-    constructor(sessionManager)
+    constructor(sessionManager, database)
     {
-        this.sessionManager = sessionManager;
+        this.database = database
+        this.sessionManager = sessionManager
     }
 
     /**
@@ -46,11 +49,13 @@ class Match
                     id: player1Id,
                     ships: [],
                     bombs: [],
+                    sunk: 0
                 },
                 player2: {
                     id: player2Id,
                     ships: [],
                     bombs: [],
+                    sunk: 0
                 },
             });
             res({success: true, content: uuid});
@@ -202,16 +207,13 @@ class Match
                         if (this.shipHasCoordinates(shipCoords, coordinates))
                         {
                             // Create an intersection between the player's bombs and the ship's coordinates.
-                            const damagedShipCoords = shipCoords.filter((value) =>
-                                match.player1.bombs.includes(value)
-                            );
-
-                            console.log(damagedShipCoords)
+                            const damagedShipCoords = match.player1.bombs.filter(bomb => this.shipHasCoordinates(shipCoords, bomb))
 
                             // Compare the ship's damaged coordinates with the complete occupation.
                             // Note: If the ship is completely damaged, then they technically would be equal.
                             if (damagedShipCoords.equals(shipCoords))
                             {
+                                match.player1.sunk += 1;
                                 return res({
                                     success: true,
                                     content: {
@@ -255,14 +257,12 @@ class Match
                     {
                         if (this.shipHasCoordinates(shipCoords, coordinates))
                         {
-                            const damagedShipCoords = shipCoords.filter((value) =>
-                                match.player2.bombs.includes(value)
-                            );
-
-                            console.log('Damaged ship coordinates: ', damagedShipCoords)
+                            const damagedShipCoords = match.player2.bombs.filter(bomb => this.shipHasCoordinates(shipCoords, bomb))
 
                             if (damagedShipCoords.equals(shipCoords))
                             {
+                                match.player2.sunk += 1;
+
                                 return res({
                                     success: true,
                                     content: {
@@ -313,6 +313,51 @@ class Match
             }
         });
     }
+
+    endMatch(winnerId, loserId)
+    {
+        return new Promise(res =>
+        {
+            // Fetch the players' Id.
+            let winnerUserId, loserUserId;
+
+            this.sessionManager.validate(winnerId).then(response =>
+            {
+                if (response.success)
+                {
+                    winnerUserId = response.content
+                }
+                else
+                {
+                    res({
+                        success: false,
+                        content: "¡La Id. del jugador es inexistente!"
+                    })
+                }
+            })
+
+            this.sessionManager.validate(loserId).then(response =>
+            {
+                if (response.success)
+                {
+                    loserUserId = response.content
+                }
+                else
+                {
+                    res({
+                        success: false,
+                        content: "¡La Id. del jugador es inexistente!"
+                    })
+                }
+            })
+
+            // Update the users' data.
+            this.database.updateElo(winnerUserId, loserUserId).then(result =>
+            {
+                res(result)
+            })
+        })
+    }
 }
 
 Array.prototype.equals = function (array)
@@ -322,6 +367,9 @@ Array.prototype.equals = function (array)
 
     if (this.length !== array.length)
         return false;
+
+    this.sort((a, b) => a[0] - b[0])
+        .sort((a, b) => a[1] - b[1])
 
     for (let i = 0, l = this.length; i < l; i++)
     {
@@ -337,7 +385,6 @@ Array.prototype.equals = function (array)
     }
     return true;
 }
-
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
 module.exports = Match;
