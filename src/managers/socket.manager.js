@@ -323,7 +323,7 @@ class Socket
             {
                 if (match.player1.sunk === 8)
                 {
-                    this.matchManager.endMatch(match.player1.id, match.player2.id).then(result =>
+                    this.matchManager.endMatch(match, match.player1.id, match.player2.id).then(result =>
                     {
                         if (!success)
                             return console.log("bruh" + result)
@@ -356,7 +356,7 @@ class Socket
             {
                 if (match.player2.sunk === 8)
                 {
-                    this.matchManager.endMatch(match.player2.id, match.player1.id).then(result =>
+                    this.matchManager.endMatch(match, match.player2.id, match.player1.id).then(result =>
                     {
                         if (!success)
                             return console.log("bruh" + result)

@@ -314,7 +314,14 @@ class Match
         });
     }
 
-    endMatch(winnerId, loserId)
+    /**
+     * Ending sequence for a match.
+     * @param match Match object.
+     * @param winnerId Winner's session id.
+     * @param loserId Loser's session id.
+     * @returns {Promise<JSON>}
+     */
+    endMatch(match, winnerId, loserId)
     {
         return new Promise(res =>
         {
@@ -351,12 +358,38 @@ class Match
                 }
             })
 
-            // Update the users' data.
-            this.database.updateElo(winnerUserId, loserUserId).then(result =>
+            // Save the match.
+            this.database.saveMatch(match, winnerUserId, loserUserId).then(matchResult =>
             {
-                res(result)
+                if (matchResult.success)
+                {
+                    // Update the users' data.
+                    this.database.updateElo(winnerUserId, loserUserId).then(eloResult =>
+                    {
+                        if (eloResult.success)
+                        {
+                            return res({
+                                success: true,
+                                content: {
+                                    elo: eloResult.content,
+                                    match: matchResult.content
+                                }
+                            })
+                        }
+                        else
+                        {
+                            res(eloResult)
+                        }
+                    })
+                }
+                else
+                {
+                    return res(matchResult)
+                }
             })
+
         })
+
     }
 }
 
