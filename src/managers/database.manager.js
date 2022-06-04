@@ -253,6 +253,12 @@ class Database
         })
     }
 
+    /**
+     * Updates two opponents' elo.
+     * @param winnerId Winner's ObjectId
+     * @param loserId Loser's ObjectId
+     * @returns {Promise<JSON>}
+     */
     updateElo(winnerId, loserId)
     {
         return new Promise(res =>
