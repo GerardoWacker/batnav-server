@@ -358,7 +358,7 @@ class Socket
                 {
                     this.matchManager.endMatch(match, match.player2.id, match.player1.id).then(result =>
                     {
-                        if (!success)
+                        if (!result.success)
                             return console.log("bruh" + result)
 
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
@@ -425,15 +425,37 @@ class Socket
 
                     if (match.player1.id === uuid)
                     {
-                        // TODO: End match with player2 win.
+                        this.matchManager.endMatch(match, match.player2.id, match.player1.id).then(result =>
+                        {
+                            if (!result.success)
+                                console.log('Bruh', result)
+
+                            this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
+                                win: true,
+                                elo: result.winnerElo,
+                                match: result.match
+                            })
+                        })
                     }
                     else if (match.player2.id === uuid)
                     {
-                        // TODO: End match with player1 win.
+                        this.matchManager.endMatch(match, match.player1.id, match.player2.id).then(result =>
+                        {
+                            if (!result.success)
+                                console.log('Bruh', result)
+
+                            this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
+                                win: true,
+                                elo: result.winnerElo,
+                                match: result.match
+                            })
+                        })
                     }
                 }
 
                 this.playerPool.delete(uuid)
+
+                return
             }
         }
     }
