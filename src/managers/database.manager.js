@@ -294,12 +294,13 @@ class Database
 
                     let loserElo = loser.stats.elo
 
-                    let eloDifference = EloUtil.calculate(winnerElo, loserElo)
+                    let newWinnerElo = EloUtil.calculateWin(winnerElo, loserElo)
+                    let newLoserElo = EloUtil.calculateLoss(loserElo, winnerElo)
 
                     this.userDatabase.updateOne({_id: winnerId}, {
                         $set: {
                             stats: {
-                                elo: winnerElo + eloDifference
+                                elo: winnerElo + newWinnerElo
                             }
                         }
                     }, (err, result) =>
@@ -319,7 +320,7 @@ class Database
                         this.userDatabase.updateOne({_id: loserId}, {
                             $set: {
                                 stats: {
-                                    elo: loserElo - eloDifference
+                                    elo: loserElo + newLoserElo
                                 }
                             }
                         }, (err, result) =>
@@ -338,7 +339,10 @@ class Database
 
                             return res({
                                 success: true,
-                                content: eloDifference
+                                content: {
+                                    winnerElo: newWinnerElo,
+                                    loserElo: newLoserElo
+                                }
                             })
                         })
                     })
