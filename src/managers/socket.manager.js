@@ -325,18 +325,18 @@ class Socket
                 {
                     this.matchManager.endMatch(match, match.player1.id, match.player2.id).then(result =>
                     {
-                        if (!success)
+                        if (!result.success)
                             return console.log("bruh" + result)
 
                         this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
                             win: true,
-                            elo: result.eloDifference,
-                            match: matchId
+                            elo: result.winnerElo,
+                            match: result.match
                         })
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
                             win: false,
-                            elo: result.eloDifference,
-                            match: matchId
+                            elo: result.loserElo,
+                            match: result.match
                         })
                     })
 
@@ -363,13 +363,13 @@ class Socket
 
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
                             win: true,
-                            elo: result.eloDifference,
-                            match: matchId
+                            elo: result.winnerElo,
+                            match: result.match
                         })
                         this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
                             win: false,
-                            elo: result.eloDifference,
-                            match: matchId
+                            elo: result.loserElo,
+                            match: result.match
                         })
                     })
 
