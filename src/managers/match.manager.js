@@ -371,7 +371,8 @@ class Match
                             return res({
                                 success: true,
                                 content: {
-                                    elo: eloResult.content,
+                                    winnerElo: eloResult.winnerElo,
+                                    loserElo: eloResult.loserElo,
                                     match: matchResult.content
                                 }
                             })
