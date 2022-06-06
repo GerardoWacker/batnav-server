@@ -216,7 +216,6 @@ class Socket
         let data = JSON.parse(rawData)
         this.matchManager.throwBomb(data.matchId, data.playerId, data.coordinates).then(response =>
         {
-            console.log(response)
             if (response.success)
             {
                 let match = this.matchManager.currentMatches.get(data.matchId)
@@ -303,7 +302,7 @@ class Socket
         const currentTurn = match.turn.number
 
         // Set turn time (in milliseconds).
-        let turnTime = 30000
+        let turnTime = 60000
 
         // Check for possible turn player types.
         switch (match.turn.player)
@@ -330,13 +329,13 @@ class Socket
 
                         this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
                             win: true,
-                            elo: result.winnerElo,
-                            match: result.match
+                            elo: result.content.winnerElo,
+                            match: result.content.match
                         })
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
                             win: false,
-                            elo: result.loserElo,
-                            match: result.match
+                            elo: result.content.loserElo,
+                            match: result.content.match
                         })
                     })
 
@@ -358,18 +357,19 @@ class Socket
                 {
                     this.matchManager.endMatch(match, match.player2.id, match.player1.id).then(result =>
                     {
+                        console.log("Result", result)
                         if (!result.success)
                             return console.log("bruh" + result)
 
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
                             win: true,
-                            elo: result.winnerElo,
-                            match: result.match
+                            elo: result.content.winnerElo,
+                            match: result.content.match
                         })
                         this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
                             win: false,
-                            elo: result.loserElo,
-                            match: result.match
+                            elo: result.content.loserElo,
+                            match: result.content.match
                         })
                     })
 

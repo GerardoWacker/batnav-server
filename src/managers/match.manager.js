@@ -336,7 +336,7 @@ class Match
                 }
                 else
                 {
-                    res({
+                    return res({
                         success: false,
                         content: "¡La Id. del jugador es inexistente!"
                     })
@@ -351,7 +351,7 @@ class Match
                 }
                 else
                 {
-                    res({
+                    return res({
                         success: false,
                         content: "¡La Id. del jugador es inexistente!"
                     })
@@ -371,8 +371,8 @@ class Match
                             return res({
                                 success: true,
                                 content: {
-                                    winnerElo: eloResult.winnerElo,
-                                    loserElo: eloResult.loserElo,
+                                    winnerElo: eloResult.content.winnerElo,
+                                    loserElo: eloResult.content.loserElo,
                                     match: matchResult.content
                                 }
                             })
