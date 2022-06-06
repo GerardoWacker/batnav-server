@@ -1,7 +1,7 @@
 const {MongoClient} = require('mongodb')
 const config = require('../../config/config.json')
 const bcrypt = require('bcrypt')
-const {EloUtil} = require("../utils/elo.util");
+const {calculateWin, calculateLoss} = require("../utils/elo.util");
 
 class Database
 {
@@ -294,13 +294,14 @@ class Database
 
                     let loserElo = loser.stats.elo
 
-                    let newWinnerElo = EloUtil.calculateWin(winnerElo, loserElo)
-                    let newLoserElo = EloUtil.calculateLoss(loserElo, winnerElo)
+                    let newWinnerElo = calculateWin(winnerElo, loserElo)
+                    let newLoserElo = calculateLoss(loserElo, winnerElo)
 
                     this.userDatabase.updateOne({_id: winnerId}, {
                         $set: {
                             stats: {
-                                elo: winnerElo + newWinnerElo
+                                elo: winnerElo + newWinnerElo,
+                                plays: winner.stats.plays + 1
                             }
                         }
                     }, (err, result) =>
@@ -320,7 +321,8 @@ class Database
                         this.userDatabase.updateOne({_id: loserId}, {
                             $set: {
                                 stats: {
-                                    elo: loserElo + newLoserElo
+                                    elo: loserElo + newLoserElo,
+                                    plays: loser.stats.plays + 1
                                 }
                             }
                         }, (err, result) =>
