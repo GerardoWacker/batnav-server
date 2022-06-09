@@ -432,8 +432,8 @@ class Socket
 
                             this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
                                 win: true,
-                                elo: result.winnerElo,
-                                match: result.match
+                                elo: result.content.winnerElo,
+                                match: result.content.match
                             })
                         })
                     }
@@ -446,8 +446,8 @@ class Socket
 
                             this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
                                 win: true,
-                                elo: result.winnerElo,
-                                match: result.match
+                                elo: result.content.winnerElo,
+                                match: result.content.match
                             })
                         })
                     }
