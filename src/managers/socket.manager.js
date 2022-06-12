@@ -302,7 +302,7 @@ class Socket
         const currentTurn = match.turn.number
 
         // Set turn time (in milliseconds).
-        let turnTime = 60000
+        let turnTime = 45000
 
         // Check for possible turn player types.
         switch (match.turn.player)
