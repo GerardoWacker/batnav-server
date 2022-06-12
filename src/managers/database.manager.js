@@ -2,6 +2,8 @@ const {MongoClient} = require('mongodb')
 const config = require('../../config/config.json')
 const bcrypt = require('bcrypt')
 const {calculateWin, calculateLoss} = require("../utils/elo.util");
+const Network = require('../utils/network.util')
+const network = new Network();
 
 class Database
 {
@@ -107,7 +109,7 @@ class Database
      * @param data<JSON> JSON containing the actual user to create.
      * @returns {Promise<JSON>}
      */
-    register(data)
+    register(data, ip)
     {
         return new Promise(res =>
         {
@@ -149,35 +151,76 @@ class Database
                         }
                         else
                         {
-                            const user = {
-                                username: data.username.toLowerCase().replace(/\s/g, ""),
-                                email: data.email.toLowerCase(),
-                                password: hash,
-                                created: new Date(),
-                                country: data.country,
-                                stats: {
-                                    elo: 1000,
-                                    plays: 0
-                                },
-                                developer: false
-                            }
 
-                            this.userDatabase.insertOne(user, (error, result) =>
+
+                            network.getUserLocation(ip).then(response =>
                             {
-                                if (error)
+                                if (response.status === 'success')
                                 {
-                                    console.log('❌ Ocurrió un error al registrar un usuario.')
-                                    console.error(err)
-                                    return res({
-                                        success: false,
-                                        content: "Ocurrió un error al intentar registrar al usuario. [c:4]"
+                                    let user = {
+                                        username: data.username.toLowerCase().replace(/\s/g, ""),
+                                        email: data.email.toLowerCase(),
+                                        password: hash,
+                                        created: new Date(),
+                                        country: response.countryCode,
+                                        stats: {
+                                            elo: 1000,
+                                            plays: 0
+                                        },
+                                        developer: false
+                                    }
+
+                                    this.userDatabase.insertOne(user, (error, result) =>
+                                    {
+                                        if (error)
+                                        {
+                                            console.log('❌ Ocurrió un error al registrar un usuario.')
+                                            console.error(err)
+                                            return res({
+                                                success: false,
+                                                content: "Ocurrió un error al intentar registrar al usuario. [c:4]"
+                                            })
+                                        }
+
+                                        return res({
+                                            success: true,
+                                            content: "¡El usuario fue creado con éxito!"
+                                        })
+                                    })
+                                }
+                                else
+                                {
+                                    let user = {
+                                        username: data.username.toLowerCase().replace(/\s/g, ""),
+                                        email: data.email.toLowerCase(),
+                                        password: hash,
+                                        created: new Date(),
+                                        country: "XX",
+                                        stats: {
+                                            elo: 1000,
+                                            plays: 0
+                                        },
+                                        developer: false
+                                    }
+                                    this.userDatabase.insertOne(user, (error, result) =>
+                                    {
+                                        if (error)
+                                        {
+                                            console.log('❌ Ocurrió un error al registrar un usuario.')
+                                            console.error(err)
+                                            return res({
+                                                success: false,
+                                                content: "Ocurrió un error al intentar registrar al usuario. [c:4]"
+                                            })
+                                        }
+
+                                        return res({
+                                            success: true,
+                                            content: "¡El usuario fue creado con éxito!"
+                                        })
                                     })
                                 }
 
-                                return res({
-                                    success: true,
-                                    content: "¡El usuario fue creado con éxito!"
-                                })
                             })
                         }
                     })
