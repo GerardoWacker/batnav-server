@@ -1,6 +1,6 @@
 {
   "name": "batnav-server",
-  "version": "2022.604.0",
+  "version": "2022.612.0",
   "description": "BatNav game server. Handles API and real-time connections. (https.//github.com/gerardowacker/batnav)",
   "main": "src/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/gerardowacker/batnav-server.git"
   },
   "engines": {
-    "node": "17.x"
+    "node": "16.x"
   },
   "author": "Gerardo Wacker (https://github.com/gerardowacker)",
   "license": "GPL-3.0",
@@ -26,6 +26,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "mongodb": "^4.4.1",
+    "node-fetch": "^2.6.1",
     "socket.io": "^4.4.1",
     "uuid": "^8.3.2"
   }
