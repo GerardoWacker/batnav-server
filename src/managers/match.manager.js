@@ -387,11 +387,12 @@ class Match
                 {
                     return res(matchResult)
                 }
+
+                this.currentMatches.delete(matchId)
             })
 
         })
 
-        this.currentMatches.delete(match)
     }
 }
 
