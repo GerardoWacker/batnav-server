@@ -321,7 +321,7 @@ class Match
      * @param loserId Loser's session id.
      * @returns {Promise<JSON>}
      */
-    endMatch(match, winnerId, loserId)
+    endMatch(matchId, match, winnerId, loserId)
     {
         return new Promise(res =>
         {
@@ -391,6 +391,7 @@ class Match
 
         })
 
+        this.currentMatches.delete(match)
     }
 }
 
