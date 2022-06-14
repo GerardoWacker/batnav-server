@@ -268,7 +268,7 @@ class Database
         return new Promise(res =>
         {
             const matchToAdd = {
-                turns: match.turn.number,
+                turns: match.turn.number || 0,
                 winner: {
                     id: winnerId,
                     bombs: match.player1.bombs
