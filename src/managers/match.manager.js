@@ -200,7 +200,7 @@ class Match
 
                 if (match.player1.id === playerId)
                 {
-                    if (this.shipHasCoordinates(match.player1.bombs))
+                    if (this.shipHasCoordinates(match.player1.bombs, coordinates))
                         return res({
                             success: false,
                             content: "¡Ya hay una bomba en esa posición!"
@@ -260,7 +260,7 @@ class Match
                 else if (match.player2.id === playerId)
                 {
                     // It's repetiiitioooon, I'm coooming baaaack tooo yooouuu.
-                    if (this.shipHasCoordinates(match.player2.bombs))
+                    if (this.shipHasCoordinates(match.player2.bombs, coordinates))
                         return res({
                             success: false,
                             content: "¡Ya hay una bomba en esa posición!"
