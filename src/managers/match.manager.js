@@ -200,6 +200,12 @@ class Match
 
                 if (match.player1.id === playerId)
                 {
+                    if (this.shipHasCoordinates(match.player1.bombs))
+                        return res({
+                            success: false,
+                            content: "¡Ya hay una bomba en esa posición!"
+                        })
+
                     // Push the bomb's coordinates
                     match.player1.bombs.push(coordinates);
 
@@ -254,6 +260,12 @@ class Match
                 else if (match.player2.id === playerId)
                 {
                     // It's repetiiitioooon, I'm coooming baaaack tooo yooouuu.
+                    if (this.shipHasCoordinates(match.player2.bombs))
+                        return res({
+                            success: false,
+                            content: "¡Ya hay una bomba en esa posición!"
+                        })
+
                     match.player2.bombs.push(coordinates);
 
                     match.player1.ships.forEach((shipCoords) =>
@@ -265,7 +277,6 @@ class Match
                             if (damagedShipCoords.equals(shipCoords))
                             {
                                 match.player2.sunk += 1;
-
                                 return res({
                                     success: true,
                                     content: {
