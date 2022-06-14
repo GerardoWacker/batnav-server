@@ -295,6 +295,8 @@ class Socket
 
     handleTurn(matchId, match)
     {
+        if(!this.matchManager.currentMatches.has(matchId))
+          return
         // Set current turn to an increment of 1.
         match.turn.number += 1
 
@@ -322,7 +324,7 @@ class Socket
             {
                 if (match.player1.sunk === 8)
                 {
-                    this.matchManager.endMatch(match, match.player1.id, match.player2.id).then(result =>
+                    this.matchManager.endMatch(matchId, match, match.player1.id, match.player2.id).then(result =>
                     {
                         if (!result.success)
                             return console.log("bruh" + result)
@@ -355,7 +357,7 @@ class Socket
             {
                 if (match.player2.sunk === 8)
                 {
-                    this.matchManager.endMatch(match, match.player2.id, match.player1.id).then(result =>
+                    this.matchManager.endMatch(matchId, match, match.player2.id, match.player1.id).then(result =>
                     {
                         console.log("Result", result)
                         if (!result.success)
@@ -425,7 +427,7 @@ class Socket
 
                     if (match.player1.id === uuid)
                     {
-                        this.matchManager.endMatch(match, match.player2.id, match.player1.id).then(result =>
+                        this.matchManager.endMatch(matchId, match, match.player2.id, match.player1.id).then(result =>
                         {
                             if (!result.success)
                                 console.log('Bruh', result)
@@ -439,7 +441,7 @@ class Socket
                     }
                     else if (match.player2.id === uuid)
                     {
-                        this.matchManager.endMatch(match, match.player1.id, match.player2.id).then(result =>
+                        this.matchManager.endMatch(matchId, match, match.player1.id, match.player2.id).then(result =>
                         {
                             if (!result.success)
                                 console.log('Bruh', result)

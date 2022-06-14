@@ -44,7 +44,10 @@ class Match
         {
             let uuid = uuidv4();
             this.currentMatches.set(uuid, {
-                turn: null,
+                turn: {
+                  player: null,
+                  number: null
+                },
                 player1: {
                     id: player1Id,
                     ships: [],
@@ -316,12 +319,13 @@ class Match
 
     /**
      * Ending sequence for a match.
+     * @param matchId Match id.
      * @param match Match object.
      * @param winnerId Winner's session id.
      * @param loserId Loser's session id.
      * @returns {Promise<JSON>}
      */
-    endMatch(match, winnerId, loserId)
+    endMatch(matchId, match, winnerId, loserId)
     {
         return new Promise(res =>
         {
@@ -387,6 +391,8 @@ class Match
                 {
                     return res(matchResult)
                 }
+
+                this.currentMatches.delete(matchId)
             })
 
         })
