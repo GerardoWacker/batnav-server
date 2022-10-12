@@ -250,6 +250,7 @@ class Database
 
                 delete user.password
                 delete user._id
+                delete user.email
 
                 return res({success: true, content: user})
             })
