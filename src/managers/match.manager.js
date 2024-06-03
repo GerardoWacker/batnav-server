@@ -343,69 +343,68 @@ class Match
             // Fetch the players' Id.
             let winnerUserId, loserUserId;
 
-            this.sessionManager.validate(winnerId).then(response =>
+            this.sessionManager.validate(winnerId).then(response1 =>
             {
-                if (response.success)
+                if (response1.success)
                 {
-                    winnerUserId = response.content
-                }
-                else
-                {
-                    return res({
-                        success: false,
-                        content: "¡La Id. del jugador es inexistente!"
-                    })
-                }
-            })
-
-            this.sessionManager.validate(loserId).then(response =>
-            {
-                if (response.success)
-                {
-                    loserUserId = response.content
-                }
-                else
-                {
-                    return res({
-                        success: false,
-                        content: "¡La Id. del jugador es inexistente!"
-                    })
-                }
-            })
-
-            // Save the match.
-            this.database.saveMatch(match, winnerUserId, loserUserId).then(matchResult =>
-            {
-                if (matchResult.success)
-                {
-                    // Update the users' data.
-                    this.database.updateElo(winnerUserId, loserUserId).then(eloResult =>
+                    winnerUserId = response1.content
+                    this.sessionManager.validate(loserId).then(response2 =>
                     {
-                        if (eloResult.success)
+                        if (response2.success)
                         {
-                            return res({
-                                success: true,
-                                content: {
-                                    winnerElo: eloResult.content.winnerElo,
-                                    loserElo: eloResult.content.loserElo,
-                                    match: matchResult.content
+                            loserUserId = response2.content
+                            // Save the match.
+                            this.database.saveMatch(match, winnerUserId, loserUserId).then(matchResult =>
+                            {
+                                if (matchResult.success)
+                                {
+                                    // Update the users' data.
+                                    this.database.updateElo(winnerUserId, loserUserId).then(eloResult =>
+                                    {
+                                        if (eloResult.success)
+                                        {
+                                            return res({
+                                                success: true,
+                                                content: {
+                                                    winnerElo: eloResult.content.winnerElo,
+                                                    loserElo: eloResult.content.loserElo,
+                                                    match: matchResult.content
+                                                }
+                                            })
+                                        }
+                                        else
+                                        {
+                                            res(eloResult)
+                                        }
+                                    })
                                 }
+                                else
+                                {
+                                    return res(matchResult)
+                                }
+
+                                this.currentMatches.delete(matchId)
                             })
                         }
                         else
                         {
-                            res(eloResult)
+                            console.log("¡La Id. del jugador es inexistente!")
+                            return res({
+                                success: false,
+                                content: "¡La Id. del jugador es inexistente!"
+                            })
                         }
                     })
                 }
                 else
                 {
-                    return res(matchResult)
+                    console.log("¡La Id. del jugador es inexistente!")
+                    return res({
+                        success: false,
+                        content: "¡La Id. del jugador es inexistente!"
+                    })
                 }
-
-                this.currentMatches.delete(matchId)
             })
-
         })
 
     }
