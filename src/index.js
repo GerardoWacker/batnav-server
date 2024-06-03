@@ -1,5 +1,5 @@
 /**
- * BatNav server
+ * batnav server
  * @author Gerardo Wacker
  */
 
