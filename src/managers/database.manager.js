@@ -268,15 +268,16 @@ class Database
     {
         return new Promise(res =>
         {
+            console.log(match)
             const matchToAdd = {
                 turns: match.turn.number || 0,
                 winner: {
                     id: winnerId,
-                    bombs: match.player1.bombs
+                    bombs: JSON.stringify(match.player1.bombs)
                 },
                 loser: {
                     id: loserId,
-                    bombs: match.player2.bombs
+                    bombs: JSON.stringify(match.player2.bombs)
                 },
                 time: Date.now()
             }
