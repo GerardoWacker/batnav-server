@@ -85,7 +85,7 @@ class Socket
             else
                 socket.emit('authentication', {
                     success: false,
-                    content: "Hubo un error validando la sesión: " + response.content
+                    content: 'Hubo un error validando la sesión: ' + response.content
                 })
         })
     }
@@ -169,7 +169,7 @@ class Socket
                                         success: false,
                                         content: {
                                             retry: true,
-                                            message: "El oponente era inválido."
+                                            message: 'El oponente era inválido.'
                                         }
                                     })
                             })
@@ -180,7 +180,7 @@ class Socket
             else
                 socket.emit('authentication', {
                     success: false,
-                    content: "Hubo un error validando la sesión: " + sessionRes.content
+                    content: 'Hubo un error validando la sesión: ' + sessionRes.content
                 })
         })
     }
@@ -201,7 +201,7 @@ class Socket
             success: false,
             content: {
                 retry: false,
-                message: "El usuario abandonó la lista de espera."
+                message: 'El usuario abandonó la lista de espera.'
             }
         })
     }
@@ -259,16 +259,16 @@ class Socket
                 {
                     if (match.player2.ships.length !== 0)
                     {
+                        this.matchManager.start(match).then(response =>
+                        {
+                            this.handleTurn(data.matchId, match)
+                        })
+
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-start', {
                             success: true
                         })
                         socket.emit('match-start', {
                             success: true
-                        })
-
-                        this.matchManager.start(match).then(response =>
-                        {
-                            this.handleTurn(data.matchId, match)
                         })
                     }
                 }
@@ -276,16 +276,16 @@ class Socket
                 {
                     if (match.player1.ships.length !== 0)
                     {
+                        this.matchManager.start(match).then(response =>
+                        {
+                            this.handleTurn(data.matchId, match)
+                        })
+
                         this.io.to(this.playerPool.get(match.player1.id)).emit('match-start', {
                             success: true
                         })
                         socket.emit('match-start', {
                             success: true
-                        })
-
-                        this.matchManager.start(match).then(response =>
-                        {
-                            this.handleTurn(data.matchId, match)
                         })
                     }
                 }
@@ -295,8 +295,8 @@ class Socket
 
     handleTurn(matchId, match)
     {
-        if(!this.matchManager.currentMatches.has(matchId))
-          return
+        if (!this.matchManager.currentMatches.has(matchId))
+            return
         // Set current turn to an increment of 1.
         match.turn.number += 1
 
@@ -327,7 +327,7 @@ class Socket
                     this.matchManager.endMatch(matchId, match, match.player1.id, match.player2.id).then(result =>
                     {
                         if (!result.success)
-                            return console.log("bruh" + result)
+                            return console.log('bruh' + result)
 
                         this.io.to(this.playerPool.get(match.player1.id)).emit('match-end', {
                             win: true,
@@ -359,9 +359,9 @@ class Socket
                 {
                     this.matchManager.endMatch(matchId, match, match.player2.id, match.player1.id).then(result =>
                     {
-                        console.log("Result", result)
+                        console.log('Result', result)
                         if (!result.success)
-                            return console.log("bruh" + result)
+                            return console.log('bruh' + result)
 
                         this.io.to(this.playerPool.get(match.player2.id)).emit('match-end', {
                             win: true,
@@ -390,7 +390,7 @@ class Socket
             default:
             {
                 // ????????????????????????????????????????????
-                console.log("¿Eh?")
+                console.log('¿Eh?')
             }
         }
 
