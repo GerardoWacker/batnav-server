@@ -101,7 +101,7 @@ class Pairing
     {
         return new Promise(async res =>
         {
-            let order = Math.floor(Math.random() * 100)
+            let order = Math.floor(Math.random() * 1000000000)
             // Adds the player to the matchmaking queue.
             this.playerPool.set(playerId, {
                 elo: playerElo,
